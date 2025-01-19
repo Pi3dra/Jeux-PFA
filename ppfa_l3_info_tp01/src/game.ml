@@ -1,9 +1,30 @@
-(* Les types des textures qu'on veut dessiner à l'écran *)
+(* entity*)
 
+type entity = int
+
+
+(*Components*)
 type texture =
     Color of Gfx.color
   | Image of Gfx.surface
 
+
+type animation = {
+  n_frames : int;
+  frames: texture list;
+  mutable current_frame: int;
+}
+
+type body = {
+  mutable x : int;
+  mutable y : int;
+  (*Hitbox*)
+  mutable width : int;
+  mutable height: int;
+}
+
+type health = int
+type damage = int  
 
 let color r g b a = Color (Gfx.color r g b a ) 
 let white = color 255 255 255 255 
