@@ -22,6 +22,7 @@ class texture  () =
 
 type tag = ..
 type tag += No_tag
+type tag += Player
 
 class tagged  =
   let r = Component.init No_tag in
@@ -63,7 +64,7 @@ class id =
 
 
 
-type state = Standing | Crouching 
+type state = Standing | Crouching | OnAir | OnGround
 
 class playerstate =
 let r = Component.init Standing in

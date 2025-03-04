@@ -14,6 +14,9 @@ let update _dt el =
   Gfx.set_color ctx white;
   Gfx.fill_rect ctx surface 0 0 ww wh;
 
+  (*Player.(debug_player (player()));
+  ceci ne marche pas jsp pourquoi
+   *)
   (*Hashtbl.iter (fun k v -> Gfx.debug "%s" k) texture_tbl;
   Gfx.debug("lol\n");*)
   Seq.iter (fun (e:t) -> 

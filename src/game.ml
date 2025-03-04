@@ -2,10 +2,24 @@ open System_defs
 open Component_defs
 open Ecs
 
+(*
+TODO: Make camera track player 
+TODO: Make player shoot balls and destory them on collision*)
+
+
+
 let update dt =
-  let () = Player.stop_players () in
-  let () = Input.handle_input () in
+
+  (*TODO:
+    ici faire une fonction update player, afin de savoir l'etat du joueur 
+  s'il peut sauter etc etc
   
+  Faire en sorte que si on relache la touche space " " on ne arrete pas le player
+
+  *) 
+  Player.debug_player ( Player.player());
+  Player.on_ground( Player.player());
+  let () = Input.handle_input () in
   Collision_system.update dt;
   Forces_system.update dt;
   Move_system.update dt;

@@ -15,10 +15,10 @@ let wall (x, y, txt, width, height  ) =
 
   Draw_system.(register (e :> t));
   Collision_system.(register (e :> t));
-  Forces_system.(register (e :> t));
+  (*Forces_system.(register (e :> t));*)
   Move_system.(register (e :> t));
 
-  Gfx.debug "Registering wall at %f, %f\n" (float x) (float y);
+  (*Gfx.debug "Registering wall at %f, %f\n" (float x) (float y);*)
 
   e
 

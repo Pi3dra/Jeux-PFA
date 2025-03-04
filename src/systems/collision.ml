@@ -1,7 +1,7 @@
 open Component_defs
 
-
 type t = collidable
+
 
 let init _ = ()
 
@@ -15,6 +15,12 @@ let update _dt el =
       let m1 = e1#mass#get in
       Seq.iteri
         (fun j (e2) ->
+          (*
+          let n1 = e1#name in 
+          let n2 = e2#name in
+          Gfx.debug "e1: %s , e2: %s \n" n1 n2;
+          *)
+
           let m2 = e2#mass#get in
           (* Une double boucle qui évite de comparer deux fois
              les objets : si on compare A et B, on ne compare pas B et A.
