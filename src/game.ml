@@ -15,9 +15,9 @@ let update dt =
   s'il peut sauter etc etc
   
   Faire en sorte que si on relache la touche space " " on ne arrete pas le player
+  *) (*
+  Player.debug_player ( Player.player());*)
 
-  *) 
-  Player.debug_player ( Player.player());
   Player.on_ground( Player.player());
   let () = Input.handle_input () in
   Collision_system.update dt;

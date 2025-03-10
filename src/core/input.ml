@@ -22,20 +22,32 @@ let handle_input () =
           let release_action = Hashtbl.find release_action_table s in
           release_action ()
         end;
-        Player.stop_players()
+        if s <> " " then
+          Player.stop_players()
     | Quit -> exit 0
     | _ -> ()
   in
   Hashtbl.iter (fun key action ->
       if has_key key then action ()) action_table
 
+
+
+  let  last_jump = ref 0.0 
+
   let () =  
     register "a" (fun () -> Player.(move_player (player()) Cst.player_speed_l));
     register "d" (fun () -> Player.(move_player (player()) Cst.player_speed_r));
-    register "Shift" (fun () -> Player.(run_player (player()) ));
+    register "Shift" (fun () -> Player.(run_player (player())));
     register "s" (fun () -> Player.(crouch_player (player()) ));
     register "z" (fun () -> Player.(stand_player (player()) ));
-    register " " (fun () -> Player.(jump_player (player())));
+    register " " (fun () -> 
+      let  time =  Sys.time () in
+      let cd = 0.269 in 
+      if time -. !last_jump >= cd then begin
+        last_jump := time; (* Update the last jump time *)
+        Player.(jump_player (player ())) (* Perform the jump *)
+      end;
+    );
 
     register_release "s" (fun () -> Player.(stand_player (player()) ));
   

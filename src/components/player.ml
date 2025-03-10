@@ -36,10 +36,17 @@ let stop_players () =
   player#velocity#set Vector.zero
 
 let move_player player v =
-  player#sum_forces#set (Vector.add v player#sum_forces#get)
+  let (ve: Vector.t) = player#velocity#get in
+  if ve.x   < 1.0 && ve.x > -1.0 then
+   player#sum_forces#set (Vector.add v player#sum_forces#get)
+  else 
+    ()
 
 let run_player player  =
-  player#velocity#set (Vector.mult 2. player#velocity#get )
+  let (ve: Vector.t) = player#velocity#get in
+  if ve.x   < 1.0 && ve.x > -1.0  then
+    player#velocity#set (Vector.mult 1.256 player#velocity#get )
+  else ()
 
 let jump_player player = 
   if player#playerstate#get = OnGround then begin
@@ -58,11 +65,11 @@ let crouch_player player =
     player#playerstate#set Crouching
 
 let on_ground player =
-  let v : Vector.t = player#velocity#get in
+  let v : Vector.t = player#velocity#get in 
   let epsilon = 1e-1 in (* Adjust depending on precision needs *)
   if abs_float v.y < epsilon then
     player#playerstate#set OnGround
-  else 
+  else
     player#playerstate#set OnAir
 
 let  state_to_string player =
