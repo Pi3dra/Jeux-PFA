@@ -14,7 +14,6 @@ let update dt =
     ici faire une fonction update player, afin de savoir l'etat du joueur 
   s'il peut sauter etc etc
   
-  Faire en sorte que si on relache la touche space " " on ne arrete pas le player
   *) (*
   Player.debug_player ( Player.player());*)
 

@@ -20,6 +20,12 @@ class texture  () =
     method texture = r
   end
 
+class health () =
+  let r = Component.init 0 in
+  object
+    method health  = r
+  end
+
 type tag = ..
 type tag += No_tag
 type tag += Player
@@ -125,6 +131,29 @@ class player name =
     inherit movable ()
   end
 
+class enemy name =
+  object
+    inherit Entity.t ~name()
+    inherit tagged 
+    inherit health ()
+
+    inherit drawable()
+    inherit physics()
+    inherit collidable()
+    inherit movable()
+  end
+
+class bullet name = 
+  object
+    inherit Entity.t ~name ()
+    inherit tagged
+
+    inherit drawable ()
+    inherit physics ()
+    inherit collidable ()
+    inherit movable ()
+
+  end
 
 class wall name =
   object
