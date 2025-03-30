@@ -64,6 +64,26 @@ let crouch_player player =
     player#box#set Rect.{width = pbox.width; height = pbox.height/2};
     player#playerstate#set Crouching
 
+    let shoot_player player = 
+      let (pos: Vector.t) = player#position#get in
+      let sum_forces = Vector.{x = 1.; y = 0.0} in
+      (*
+      Gfx.debug "Before shooting: Player tag = %s\n" (Component_defs.tag_tostring player#tag#get);*)
+      let b = Bullet.bullet (pos.x +. 70.0) pos.y sum_forces in
+    
+      (* Debugging prints 
+
+      Gfx.debug "Bullet created with tag = %s\n" (Component_defs.tag_tostring b#tag#get);*)
+    
+      Draw_system.(register (b :> t));
+      Collision_system.(register (b :> t));
+      Move_system.(register (b :> t));
+      Forces_system.(register (b :> t));
+  
+      (*
+      Gfx.debug "After shooting: Player tag = %s\n" (Component_defs.tag_tostring player#tag#get);*)
+      ()
+
 let on_ground player =
   let v : Vector.t = player#velocity#get in 
   let epsilon = 1e-1 in (* Adjust depending on precision needs *)
@@ -83,15 +103,18 @@ let debug_player player =
     let v: Vector.t = player#velocity#get in
     let sf:Vector.t = player#sum_forces#get in 
     let p: Vector.t = player#position#get in
+    let t = player#tag#get in
     Gfx.debug "Debug: \n
                Vitesse: (%f,%f) \n
                Position: (%f,%f) \n
                Sum_forces (%f,%f) \n
-               State: %s \n\n
+               State: %s \n
+               Tag : %s \n \n
                " v.x v.y
                  p.x p.y
                  sf.x sf.y
                  (state_to_string player)
+                 (Component_defs.tag_tostring t)
 
 
 

@@ -7,6 +7,8 @@ let init _ = ()
 
 let white = Gfx.color 255 255 255 255
 
+
+
 let update _dt el =
   let Global.{window;ctx;texture_tbl} = Global.get () in
   let surface = Gfx.get_surface window in
@@ -17,15 +19,26 @@ let update _dt el =
   (*Player.(debug_player (player()));
   ceci ne marche pas jsp pourquoi
    *)
+
+  (*
+   let piso = Hashtbl.find_opt texture_tbl "piso.png" in
+   match piso with
+   | Some img -> 
+      Texture.draw ctx surface (Vector.{x = 0. ; y = 0. }) (Rect.{width = 64; height = 64}) (Texture.Image(img));
+      (*Gfx.blit_scale ctx surface img 0 0 64 64*)
+   | None -> ();   
+   *)
+
   (*Hashtbl.iter (fun k v -> Gfx.debug "%s" k) texture_tbl;
   Gfx.debug("lol\n");*)
   Seq.iter (fun (e:t) -> 
       let pos = e#position#get in
       let box = e#box#get in
       let txt = e#texture#get in
-      (*Gfx.debug "Size: %d" (Seq.length el); *)
       Texture.draw ctx surface pos box txt
     ) el;
+
+
 
   (*Mover a constantes*)
    (*

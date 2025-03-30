@@ -16,8 +16,10 @@ let update dt =
   
   *) (*
   Player.debug_player ( Player.player());*)
+  
 
   Player.on_ground( Player.player());
+  List.iter Enemy.move_enemy (Enemy.enemy());
   let () = Input.handle_input () in
   Collision_system.update dt;
   Forces_system.update dt;
@@ -37,14 +39,17 @@ let run () =
   let ctx = Gfx.get_context window in
   (*
   let font = Gfx.load_font Cst.font_name "" 128 in*)
-  let _walls = Wall.walls () in
+
   let player = Player.players() in
+  let enemy = Enemy.enemies1() in
 
   (* Load the tileset file *)
   let tileset = Gfx.load_file "resources/tileset.txt" in
 
   (* Create a hashtable to store images *)
   let texture_tbl = Hashtbl.create 10 in
+
+  
 
   Gfx.main_loop
     (fun _dt -> Gfx.get_resource_opt tileset)
@@ -76,7 +81,8 @@ let run () =
          )
     );
 
+  let _walls = Wall.walls texture_tbl in
 
-  let global = Global.{ window; ctx; player; map = Cst.map; texture_tbl;waiting = 1; } in
+  let global = Global.{ window; ctx; player;enemy; map = Cst.map; texture_tbl;waiting = 1; } in
   Global.set global;
   Gfx.main_loop update (fun () -> ())

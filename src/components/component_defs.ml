@@ -26,11 +26,24 @@ class health () =
     method health  = r
   end
 
-type tag = ..
-type tag += No_tag
-type tag += Player
+class removable () =
+  let r = Component.init (fun ()->()) in
+  object 
+    method unregister = r
+end
 
-class tagged  =
+
+type tag = No_tag | Player | Bullet | Enemy1
+
+let tag_tostring t =
+  match t with
+  | No_tag -> "No_tag"
+  | Player -> "Player"
+  | Bullet -> "Bullet"
+  | _ -> "None"
+
+
+class tagged ()  =
   let r = Component.init No_tag in
   object
     method tag = r
@@ -86,6 +99,8 @@ end
 class  collidable () =
   object
     inherit Entity.t () 
+    inherit tagged()
+    inherit removable()
     inherit position ()
     inherit velocity () 
     inherit box ()
@@ -95,6 +110,7 @@ class  collidable () =
 class  physics () =
   object
     inherit Entity.t ()
+    inherit tagged ()
     inherit mass ()
     inherit sum_forces ()
     inherit velocity ()
@@ -122,7 +138,6 @@ class  movable () =
 class player name =
   object
     inherit Entity.t ~name ()
-    inherit tagged 
     inherit playerstate
 
     inherit drawable ()
@@ -134,7 +149,6 @@ class player name =
 class enemy name =
   object
     inherit Entity.t ~name()
-    inherit tagged 
     inherit health ()
 
     inherit drawable()
@@ -146,7 +160,6 @@ class enemy name =
 class bullet name = 
   object
     inherit Entity.t ~name ()
-    inherit tagged
 
     inherit drawable ()
     inherit physics ()
@@ -158,7 +171,6 @@ class bullet name =
 class wall name =
   object
     inherit Entity.t ~name ()
-    inherit tagged
 
     inherit drawable () 
     inherit collidable ()

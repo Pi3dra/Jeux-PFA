@@ -11,7 +11,11 @@ let update _dt el =
     (fun (e : t) ->
       let m = e#mass#get in
       if Float.is_finite m then begin
-        let f = Vector.add gravity e#sum_forces#get in
+        let apply_gravity = e#tag#get <> Bullet in
+        let f = 
+          if apply_gravity then Vector.add gravity e#sum_forces#get 
+          else e#sum_forces#get 
+        in
         e#sum_forces#set Vector.zero;
         let a = Vector.mult (1. /. m) f in
         let dv = Vector.mult dt a in

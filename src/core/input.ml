@@ -33,6 +33,7 @@ let handle_input () =
 
 
   let  last_jump = ref 0.0 
+  let last_shot = ref 0.0 
 
   let () =  
     register "a" (fun () -> Player.(move_player (player()) Cst.player_speed_l));
@@ -40,14 +41,23 @@ let handle_input () =
     register "Shift" (fun () -> Player.(run_player (player())));
     register "s" (fun () -> Player.(crouch_player (player()) ));
     register "z" (fun () -> Player.(stand_player (player()) ));
-    register " " (fun () -> 
+    register "z" (fun () -> 
       let  time =  Sys.time () in
-      let cd = 0.269 in 
+      let cd = 0.1 (*0.269*) in 
       if time -. !last_jump >= cd then begin
         last_jump := time; (* Update the last jump time *)
         Player.(jump_player (player ())) (* Perform the jump *)
       end;
     );
+    register " " ( fun () -> 
+      let  time =  Sys.time () in
+      let cd = 0.1(*1.3*) in 
+      if time -. !last_jump >= cd  then begin
+        last_jump := time; (* Update the last jump time *)
+        Player.(shoot_player (player ())) (* Perform the jump *)
+      end;
+  
+      );
 
     register_release "s" (fun () -> Player.(stand_player (player()) ));
   
