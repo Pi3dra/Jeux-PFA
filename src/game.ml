@@ -20,6 +20,7 @@ let update dt =
 
   Player.on_ground( Player.player());
   List.iter Enemy.move_enemy (Enemy.enemy());
+  List.iter (fun x -> Gfx.debug "%d" (Enemy.healt x)) (Enemy.enemy());
   let () = Input.handle_input () in
   Collision_system.update dt;
   Forces_system.update dt;

@@ -105,6 +105,7 @@ class  collidable () =
     inherit velocity () 
     inherit box ()
     inherit mass ()
+    inherit health ()
   end
 
 class  physics () =

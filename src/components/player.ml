@@ -2,6 +2,11 @@ open Ecs
 open Component_defs
 open System_defs
 
+let delete player =
+  Collision_system.unregister(player :> Collision.t );
+  Draw_system.unregister(player :> Draw.t);
+  Forces_system.unregister(player :> Forces.t);
+  Move_system.unregister(player :> Move.t)
 
 let player (name, x, y, txt, width, height) =
   let e = new player name in
@@ -15,6 +20,8 @@ let player (name, x, y, txt, width, height) =
   e#mass#set 30.0 ;
   e#velocity#set Vector.zero;
   e#sum_forces#set Vector.zero;
+  e#health#set 10000;
+  
 
 
   (* Rajouter velocity question 7.5 *)
@@ -22,6 +29,7 @@ let player (name, x, y, txt, width, height) =
   Collision_system.( register (e :> t));
   Move_system.(register (e:> t));
   Forces_system.(register( e:> t));
+  e#unregister#set (fun () -> delete e);
   (* Question 7.5 enregistrer auprès du Move_system *)
   e
 
@@ -127,3 +135,5 @@ let stand_player player =
     player#box#set Rect.{width = pbox.width; height = pbox.height*2};
     player#playerstate#set Standing;
   | _ -> ()
+
+

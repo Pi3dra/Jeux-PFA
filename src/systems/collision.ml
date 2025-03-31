@@ -30,20 +30,6 @@ let update _ el =
         let b2 = e2#box#get in
         let pdiff, rdiff = Rect.mdiff p2 b2 p1 b1 in
         if Rect.has_origin pdiff rdiff then begin
-
-          match (e1#tag#get, e2#tag#get) with
-          (*
-          | (Bullet, Bullet) -> 
-            e1#unregister#get ();
-            (*e2#unregister#get ()*)*)
-          | (Bullet, _) -> 
-            e1#unregister#get()
-          | (_, Bullet) ->
-            e2#unregister#get ()
-          | (_, _ ) -> ()
-          ;
-
-
           let v1 = e1#velocity#get in
           let v2 = e2#velocity#get in
           let pn = Rect.penetration_vector pdiff rdiff in
@@ -68,5 +54,51 @@ let update _ el =
           let nv2 = Vector.sub v2 (Vector.mult (j/.m2) n) in
           e1#velocity#set nv1;
           e2#velocity#set nv2;
+          match (e1#tag#get, e2#tag#get) with
+          (*
+          | (Bullet, Bullet) -> 
+            e1#unregister#get ();
+            (*e2#unregister#get ()*)*)
+          |(Bullet,Enemy1)->
+            let current_health = e2#health#get in  
+              if current_health > 0 then begin
+                e2#health#set (current_health - 50);
+                e1#unregister#get()
+              end
+              else
+                e2#unregister#get ();
+                e1#unregister#get()
+          |(Enemy1,Bullet)->
+            let current_health = e1#health#get in  
+              if current_health > 0 then 
+                begin
+                e1#health#set (current_health - 50);
+                
+                e2#unregister#get()
+                end
+              else
+                e1#unregister#get ();
+                e2#unregister#get()
+                
+          (*| (Bullet, _) -> 
+            e1#unregister#get()*)
+          | (_, Bullet) ->
+            e2#unregister#get ()
+          | (Enemy1,Player)->
+            let current_health = e2#health#get in  
+              if current_health > 0 then 
+                e2#health#set (current_health - 20)
+              else
+                e2#unregister#get ()
+          | (Player,Enemy1)->
+            let current_health = e1#health#get in  
+              if current_health > 0 then 
+                e1#health#set (current_health - 20)
+              else
+                e1#unregister#get ()
+      
+          | (_, _ ) -> ()
+          ;
+
         end
 end)

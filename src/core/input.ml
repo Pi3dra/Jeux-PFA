@@ -13,7 +13,7 @@ let handle_input () =
   let () =
     match Gfx.poll_event () with
     | KeyDown s -> 
-        (*Gfx.debug "KeyDown: %s"  s;*)
+        (*Gfx.debug "KeyDown: %s%!"  s;*)
         (*Player.(debug_player( player()));*)
         set_key s
     | KeyUp s ->
@@ -35,6 +35,17 @@ let handle_input () =
   let  last_jump = ref 0.0 
   let last_shot = ref 0.0 
 
+
+  let space_f = ( fun () -> 
+    let  time =  Sys.time () in
+    let cd = 0.1(*1.3*) in 
+    if time -. !last_jump >= cd  then begin
+      last_jump := time; (* Update the last jump time *)
+      Player.(shoot_player (player ())) (* Perform the jump *)
+    end;
+
+    )
+
   let () =  
     register "a" (fun () -> Player.(move_player (player()) Cst.player_speed_l));
     register "d" (fun () -> Player.(move_player (player()) Cst.player_speed_r));
@@ -49,15 +60,8 @@ let handle_input () =
         Player.(jump_player (player ())) (* Perform the jump *)
       end;
     );
-    register " " ( fun () -> 
-      let  time =  Sys.time () in
-      let cd = 0.1(*1.3*) in 
-      if time -. !last_jump >= cd  then begin
-        last_jump := time; (* Update the last jump time *)
-        Player.(shoot_player (player ())) (* Perform the jump *)
-      end;
-  
-      );
+    register " " space_f;
+    register "spaceKey" space_f;
 
     register_release "s" (fun () -> Player.(stand_player (player()) ));
   
