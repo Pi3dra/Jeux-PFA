@@ -33,7 +33,7 @@ class removable () =
 end
 
 
-type tag = No_tag | Player | Bullet | Enemy1
+type tag = No_tag | Player | Bullet | Enemy1 | Enemy2
 
 let tag_tostring t =
   match t with
@@ -150,8 +150,15 @@ class player name =
 class enemy name =
   object
     inherit Entity.t ~name()
-    inherit health ()
+    inherit drawable()
+    inherit physics()
+    inherit collidable()
+    inherit movable()
+  end
 
+class enemy2 name =
+  object
+    inherit Entity.t ~name()
     inherit drawable()
     inherit physics()
     inherit collidable()

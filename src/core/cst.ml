@@ -31,6 +31,7 @@ let window_height = 600
 let paddle_color = Texture.blue
 let paddle_color2 = Texture.red
 
+let paddle_color3 = Texture.green
 
 let player_speed_r = Vector.{ x = 0.1; y = 0.}
 let player_speed_l = Vector.{ x = -0.1; y = 0.}

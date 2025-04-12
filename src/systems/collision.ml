@@ -54,34 +54,37 @@ let update _ el =
           let nv2 = Vector.sub v2 (Vector.mult (j/.m2) n) in
           e1#velocity#set nv1;
           e2#velocity#set nv2;
+        
+
           match (e1#tag#get, e2#tag#get) with
           (*
           | (Bullet, Bullet) -> 
             e1#unregister#get ();
             (*e2#unregister#get ()*)*)
-          |(Bullet,Enemy1)->
-            let current_health = e2#health#get in  
-              if current_health > 0 then begin
-                e2#health#set (current_health - 50);
-                e1#unregister#get()
-              end
-              else
+            |(Bullet, Enemy1) ->
+              let current_health = e2#health#get in
+              let new_health = current_health - 50 in
+              if new_health <= 0 then begin
                 e2#unregister#get ();
-                e1#unregister#get()
+                e1#unregister#get ()
+              end else begin
+                e2#health#set new_health;
+                e1#unregister#get ()
+              end
+            
           |(Enemy1,Bullet)->
-            let current_health = e1#health#get in  
-              if current_health > 0 then 
-                begin
-                e1#health#set (current_health - 50);
+            let current_health = e1#health#get in
+            let new_health = current_health - 50 in
+            if new_health <= 0 then begin
+              e2#unregister#get ();
+              e1#unregister#get ()
+            end else begin
+              e2#health#set new_health;
+              e1#unregister#get ()
+            end
                 
-                e2#unregister#get()
-                end
-              else
-                e1#unregister#get ();
-                e2#unregister#get()
-                
-          (*| (Bullet, _) -> 
-            e1#unregister#get()*)
+          | (Bullet, _) -> 
+            e1#unregister#get()
           | (_, Bullet) ->
             e2#unregister#get ()
           | (Enemy1,Player)->

@@ -17,10 +17,13 @@ let update dt =
   *) (*
   Player.debug_player ( Player.player());*)
   
-
+  
+  let Global.{enemy; enemy2;_ } = Global.get () in
+   
   Player.on_ground( Player.player());
-  List.iter Enemy.move_enemy (Enemy.enemy());
-  List.iter (fun x -> Gfx.debug "%d" (Enemy.healt x)) (Enemy.enemy());
+  List.iter Enemy.move_enemy (enemy);
+  List.iter Enemy2.move_enemy2 (enemy2);
+ 
   let () = Input.handle_input () in
   Collision_system.update dt;
   Forces_system.update dt;
@@ -43,6 +46,7 @@ let run () =
 
   let player = Player.players() in
   let enemy = Enemy.enemies1() in
+  let enemy2 = Enemy2.enemies2() in
 
   (* Load the tileset file *)
   let tileset = Gfx.load_file "resources/tileset.txt" in
@@ -84,6 +88,6 @@ let run () =
 
   let _walls = Wall.walls texture_tbl in
 
-  let global = Global.{ window; ctx; player;enemy; map = Cst.map; texture_tbl;waiting = 1; } in
+  let global = Global.{ window; ctx; player;enemy;enemy2; map = Cst.map; texture_tbl;waiting = 1; } in
   Global.set global;
   Gfx.main_loop update (fun () -> ())

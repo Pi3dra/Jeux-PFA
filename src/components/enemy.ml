@@ -2,7 +2,11 @@ open Ecs
 open Component_defs
 open System_defs
 
-
+let delete enemy =
+  Collision_system.unregister(enemy :> Collision.t );
+  Draw_system.unregister(enemy :> Draw.t);
+  Forces_system.unregister(enemy :> Forces.t);
+  Move_system.unregister(enemy :> Move.t)
 
 
 let enemy (name, x, y, txt, width, height) =
@@ -22,6 +26,7 @@ let enemy (name, x, y, txt, width, height) =
   Collision_system.( register (e :> t));
   Move_system.(register (e:> t));
   Forces_system.(register( e:> t));
+  e#unregister#set (fun () -> delete e);
   e
 
   
@@ -32,13 +37,14 @@ let enemy (name, x, y, txt, width, height) =
       (64*8, 164);  (* Premier ennemi à la position (64*8, 164) *)
       (64*1, 164); (* Deuxième ennemi à la position (128*8, 164) *)
       (64*3, 164); (* Troisième ennemi à la position (192*8, 164) *)
+      (64*2, 164);
+      (64*4, 164);
+      (64*5, 164);
       (* Ajoute d'autres positions ici si nécessaire *)
     ] in
     List.map (fun (x, y) -> enemy Cst.("enemy1", x, y, paddle_color2, 64, 128)) positions
   
-  let enemy () = 
-    let Global.{enemy; _ } = Global.get () in
-    enemy
+
     
 
   let move_enemy enemy  =
