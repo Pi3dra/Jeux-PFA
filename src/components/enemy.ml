@@ -1,17 +1,18 @@
 open Ecs
 open Component_defs
 open System_defs
+open Anim
 
 let delete enemy =
   Collision_system.unregister(enemy :> Collision.t );
-  Draw_system.unregister(enemy :> Draw.t);
+  Animation_system.unregister(enemy :> Animation.t);
   Forces_system.unregister(enemy :> Forces.t);
   Move_system.unregister(enemy :> Move.t)
 
 
-let enemy (name, x, y, txt, width, height) =
+let enemy (name, x, y, animation, width, height) =
   let e = new enemy name in
-  e#texture#set txt;
+  e#animation#set animation;
   e#tag#set Enemy1;
   e#position#set Vector.{x = float x; y = float y};
   e#box#set Rect.{width; height};
@@ -22,7 +23,7 @@ let enemy (name, x, y, txt, width, height) =
   e#sum_forces#set Vector.zero;
   e#health#set 100;
 
-  Draw_system.(register (e :> t));
+  Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Move_system.(register (e:> t));
   Forces_system.(register( e:> t));
@@ -30,32 +31,47 @@ let enemy (name, x, y, txt, width, height) =
   e
 
   
-  let healt enemy = enemy#health#get
-  let enemies () =  enemy  Cst.("enemy1", 64*8, 164, paddle_color2, 64, 128)
-  let enemies1 () =
-    let positions = [
-      (64*8, 164);  (* Premier ennemi à la position (64*8, 164) *)
-      (64*1, 164); (* Deuxième ennemi à la position (128*8, 164) *)
-      (64*3, 164); (* Troisième ennemi à la position (192*8, 164) *)
-      (64*2, 164);
-      (64*4, 164);
-      (64*5, 164);
-      (* Ajoute d'autres positions ici si nécessaire *)
-    ] in
-    List.map (fun (x, y) -> enemy Cst.("enemy1", x, y, paddle_color2, 64, 128)) positions
+let healt enemy = enemy#health#get
+
+(*
+let enemies () =  enemy  Cst.("enemy1", 64*8, 164, Cst.paddle_color2, 64, 128)
+*)
+
+
+(*TODO: ANIMATE THIS*)
+let enemies1 texture_tbl =
+  let animation = {
+    file = "Opossum.png"; 
+    start_pos = Vector.zero;
+    current_pos = Vector.zero;
+    current_frame = 0; 
+    frames = 6; 
+    last_frame_time = ref 0.0;
+    flip = false;
+    frame_duration = 200.0} in
+  let positions = [
+    (64*14, 164); (* Premier ennemi à la position (64*8, 164) *)
+    (* Ajoute d'autres positions ici si nécessaire *)
+  ] in
+
+  (*TODO: REVERSE AND SHAVE PIXELS*)
+  List.map (fun (x, y) -> enemy Cst.("enemy1", x, y,animation, 70, 56)) positions
   
 
     
 
-  let move_enemy enemy  =
-    let num =  (Random.int 2)in 
-    let enemy_speed_r = Vector.{ x = 0.1; y = 0.} in
-    let enemy_speed_l = Vector.{ x = -0.1; y = 0.}in 
-    let (ve: Vector.t) = enemy#velocity#get in
-    if ve.x   < 1.0 && ve.x > -1.0 then
-      if num = 0 then 
-      enemy#sum_forces#set (Vector.add enemy_speed_l enemy#sum_forces#get)
-    else 
-      enemy#sum_forces#set (Vector.add enemy_speed_r enemy#sum_forces#get)
-
+  let move_enemy enemy time =
+    let speed = 0.1 in  
+    let period = 2.0 in  
+    
+    let phase = mod_float time period /. period in
+    
+    let direction = if phase < 0.5 then -2.0 else 2.0 in
+    
+    let enemy_speed = Vector.{ 
+      x = direction *. speed; 
+      y = 0.1
+    } in
+    
+    enemy#velocity#set enemy_speed
   

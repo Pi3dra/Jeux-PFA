@@ -6,6 +6,8 @@ let sub a b = { x = a.x -. b.x; y = a.y -. b.y }
 
 let mult k a = { x = k*. a.x; y = k*. a.y }
 
+let k_add k a = { x = k +. a.x; y = k +. a.y }
+
 let dot a b =  a.x *. b.x +. a.y *. b.y
 let norm a = sqrt(dot a a)
 let normalize a = 

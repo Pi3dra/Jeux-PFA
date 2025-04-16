@@ -1,17 +1,18 @@
 open Ecs
 open Component_defs
 open System_defs
+open Anim
 
 let delete enemy2 =
+  Animation_system.unregister(enemy2 :> Animation.t);
   Collision_system.unregister(enemy2 :> Collision.t );
-  Draw_system.unregister(enemy2 :> Draw.t);
   Forces_system.unregister(enemy2 :> Forces.t);
   Move_system.unregister(enemy2 :> Move.t)
 
 
-let enemy2 (name, x, y, txt, width, height) =
-  let e = new enemy name in
-  e#texture#set txt;
+let enemy2 (name, x, y, animation, width, height) =
+  let e = new enemy2 name in
+  e#animation#set animation;
   e#tag#set Enemy2;
   e#position#set Vector.{x = float x; y = float y};
   e#box#set Rect.{width; height};
@@ -23,38 +24,55 @@ let enemy2 (name, x, y, txt, width, height) =
   e#health#set 100;
   
 
-  Draw_system.(register (e :> t));
+  Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Move_system.(register (e:> t));
   (*Forces_system.(register( e:> t));*)
   e#unregister#set (fun () -> delete e);
   e
 
-  let enemies21() =  enemy2  Cst.("enemy2", 64*8, 200, paddle_color3, 64, 64)
+  (*
+  let enemies21() =  
+
+    enemy2  Cst.("enemy2", 64*8, 200, paddle_color2, 64, 64)
+  *)
+
   let enemies2 () =
+    let animation = {
+      file = "eagle-attack.png"; 
+      start_pos = Vector.zero;
+      current_pos = Vector.zero;
+      current_frame = 0; 
+      frames = 4; 
+      last_frame_time = ref 0.0;
+      flip = false;
+      frame_duration = 200.0} in
+
     let positions2 = [
-      (64*4, 400);
-      (64*1, 400);
-      (64*7, 400);
+      (64*8, 300);
+      (64*11, 300);
 
       (* Ajoute d'autres positions ici si nécessaire *)
     ] in
-    List.map (fun (x, y) -> enemy2 Cst.("enemy2", x, y, paddle_color3, 64, 64)) positions2
+    List.map (fun (x, y) -> enemy2 Cst.("enemy2", x, y, animation, 78, 78)) positions2
   
   let enemy2 () = 
     let Global.{enemy; _ } = Global.get () in
     enemy
 
-
-    let move_enemy2 enemy =
-      let num =  (Random.int 2)in 
-    let enemy_speed_r = Vector.{ x = 0.1; y = 0.1} in
-    let enemy_speed_l = Vector.{ x = -0.1; y = -0.1}in 
-      if num = 0 then 
-      enemy#velocity#set (Vector.add enemy_speed_l enemy#velocity#get)
-    else 
-      enemy#velocity#set (Vector.add enemy_speed_r enemy#velocity#get)
-
-    
-  
-  
+(*
+    let move_enemy21 enemy time =
+      let amplitude = 0.2 in  (*taille cercles*)
+      let frequency = 20.0 in
+      let enemy_speed = Vector.{ x = 0.1; y = amplitude *. sin (frequency *. time) } in
+      enemy#velocity#set enemy_speed
+  *)  
+let move_enemy2 enemy time =
+  let amplitude = 0.1 in  
+  let frequency = 2.0 in   
+  let enemy_speed = Vector.{ 
+    x = amplitude *. cos (frequency *. time); 
+    y = amplitude *. sin (frequency *. time) 
+  } in
+  enemy#velocity#set enemy_speed
+      

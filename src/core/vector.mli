@@ -4,6 +4,8 @@ type t = { x : float; y : float; }
 val add : t -> t -> t
 (** Addition of vectors *)
 
+val k_add : float -> t -> t
+
 val sub : t -> t -> t
 (** Subtraction of vectors *)
 

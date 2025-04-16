@@ -10,8 +10,10 @@ let update _dt el =
   Seq.iter
     (fun (e : t) ->
       let m = e#mass#get in
+      (*TODO ICI il y a plus de BULLET*)
       if Float.is_finite m then begin
         let apply_gravity = e#tag#get <> Bullet in
+        
         let f = 
           if apply_gravity then Vector.add gravity e#sum_forces#get 
           else e#sum_forces#get 

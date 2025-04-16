@@ -8,3 +8,5 @@ module Draw_system = System.Make(Draw)
 module Move_system = System.Make(Move)
 
 module Forces_system = System.Make(Forces)
+
+module Animation_system = System.Make(Animation)

@@ -1,6 +1,4 @@
 open Ecs
-                (*Lista animaciones, Width, height, fps, number of frames*)
-type animation = Gfx.surface list * int * int *int 
 
 class position () =
   let r = Component.init Vector.zero in
@@ -14,11 +12,27 @@ class box  () =
     method box = r
   end
 
+(*
 class texture  () =
-  let r = Component.init (Texture.Color (Gfx.color 0 0 0 255)) in
+  let r = Component.init ("Red") in
   object
     method texture = r
   end
+*)
+
+class texture  () =
+  let r = Component.init (Anim.Color(Gfx.color 255 255 255 255)) in
+  object
+    method texture = r
+  end
+
+
+
+class animation () =
+  let r = Component.init( Anim.default_anim "atlas.png") in
+  object 
+    method animation = r
+end
 
 class health () =
   let r = Component.init 0 in
@@ -32,8 +46,13 @@ class removable () =
     method unregister = r
 end
 
+class remove_tag () =
+  let r = Component.init false in
+  object
+    method remove_tag = r
+end
 
-type tag = No_tag | Player | Bullet | Enemy1 | Enemy2
+type tag = Wall | No_tag | Player | Bullet | Enemy1 | Enemy2
 
 let tag_tostring t =
   match t with
@@ -48,14 +67,9 @@ class tagged ()  =
   object
     method tag = r
   end
-(*
-class resolver  =
-  let r = Component.init (fun (_ : Vector.t) (_ : tagged) -> ) in
-  object
-    method resolve = r
-  end
-*)
-  (*velocity*)
+
+
+(*velocity*)
 class velocity () =
   let r = Component.init (Vector.zero) in
   object 
@@ -83,12 +97,14 @@ class id =
 
 
 
-type state = Standing | Crouching | OnAir | OnGround
+type state = Moving | Standing | Crouching | OnAirUp | OnAirDown | Idle | Left | Right
+
+(*Code to chang*)
 
 class playerstate =
-let r = Component.init Standing in
+  let r = Component.init (Hashtbl.create 10 : (state, unit) Hashtbl.t) in
 object
-  method playerstate = r 
+  method playerstate = r
 end
 (** Interfaces : ici on liste simplement les types des classes dont on hérite
     si deux classes définissent les mêmes méthodes, celles de la classe écrite
@@ -101,6 +117,7 @@ class  collidable () =
     inherit Entity.t () 
     inherit tagged()
     inherit removable()
+    inherit remove_tag()
     inherit position ()
     inherit velocity () 
     inherit box ()
@@ -125,11 +142,20 @@ class  drawable () =
     inherit texture ()
   end
 
+class  animated() =
+  object
+    inherit Entity.t ()
+    inherit position () 
+    inherit box ()
+    inherit animation ()
+  end
+
 class  movable () =
   object
   inherit Entity.t ()
   inherit position ()
   inherit velocity ()
+  inherit tagged () (*CHANGED*)
   end
 
 (** Entités :
@@ -139,18 +165,18 @@ class  movable () =
 class player name =
   object
     inherit Entity.t ~name ()
-    inherit playerstate
+    inherit playerstate 
 
-    inherit drawable ()
+    inherit animated ()
     inherit physics () 
     inherit collidable ()
     inherit movable ()
   end
 
-class enemy name =
+  class enemy name =
   object
     inherit Entity.t ~name()
-    inherit drawable()
+    inherit animated()
     inherit physics()
     inherit collidable()
     inherit movable()
@@ -159,11 +185,12 @@ class enemy name =
 class enemy2 name =
   object
     inherit Entity.t ~name()
-    inherit drawable()
+    inherit animated()
     inherit physics()
     inherit collidable()
     inherit movable()
   end
+
 
 class bullet name = 
   object
@@ -180,7 +207,14 @@ class wall name =
   object
     inherit Entity.t ~name ()
 
+    inherit tagged ()
     inherit drawable () 
     inherit collidable ()
     inherit physics ()
+end
+
+class prop name =
+  object
+    inherit Entity.t ~name ()
+    inherit drawable () 
 end
