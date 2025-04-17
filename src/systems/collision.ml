@@ -39,14 +39,20 @@ let handle_player_enemy_collision player_entity enemy_entity enemy_tag (pn: Vect
           player_entity#unregister#get ()
         else begin
           player_entity#health#set new_health;
-          let horizontal_rebound_strength = 0.5 in
+          let horizontal_rebound_strength = 0.7 in
           let rebound_pn = if negate_pn then Vector.neg pn else pn in
-          let rebound_velocity =
+
+          let velocity =
             if abs_float pn.x > abs_float pn.y then
               Vector.{x = horizontal_rebound_strength *. (Float.copy_sign 1.0 rebound_pn.x); y = 0.0}
             else
               Vector.mult horizontal_rebound_strength rebound_pn
           in
+
+          let velocity2 = if not negate_pn then Vector.neg velocity else velocity in
+
+          let rebound_velocity = Vector.{x = velocity2.x ; y = velocity2.y -. 0.7} in
+
           player_entity#velocity#set (Vector.add player_entity#velocity#get rebound_velocity)
         end
       end
