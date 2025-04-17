@@ -52,7 +52,7 @@ class remove_tag () =
     method remove_tag = r
 end
 
-type tag = Wall | No_tag | Player | Bullet | Enemy1 | Enemy2
+type tag = Wall | No_tag | Player | Bullet | Enemy1 | Enemy2 | Enemy3 | Enemy4
 
 let tag_tostring t =
   match t with
@@ -106,6 +106,15 @@ class playerstate =
 object
   method playerstate = r
 end
+
+type direction = L | R
+
+class enemy_direction () =
+  let r = Component.init L in
+object
+  method enemy_direction = r
+end
+
 (** Interfaces : ici on liste simplement les types des classes dont on hérite
     si deux classes définissent les mêmes méthodes, celles de la classe écrite
     après sont utilisées (héritage multiple).
@@ -180,6 +189,7 @@ class player name =
     inherit physics()
     inherit collidable()
     inherit movable()
+    inherit enemy_direction()
   end
 
 class enemy2 name =
@@ -189,8 +199,28 @@ class enemy2 name =
     inherit physics()
     inherit collidable()
     inherit movable()
+    inherit enemy_direction()
   end
 
+class enemy3 name =
+  object
+    inherit Entity.t ~name()
+    inherit animated()
+    inherit physics()
+    inherit collidable()
+    inherit movable()
+    inherit enemy_direction()
+  end  
+
+class enemy4 name =
+  object
+    inherit Entity.t ~name()
+    inherit animated()
+    inherit physics()
+    inherit collidable()
+    inherit movable()
+    inherit enemy_direction()
+  end  
 
 class bullet name = 
   object

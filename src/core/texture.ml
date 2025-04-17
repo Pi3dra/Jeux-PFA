@@ -32,8 +32,10 @@ let draw ctx dst pos box src (animation: Anim.t option) =
         let frame = animm.current_frame in
         let ox = int_of_float origin.Vector.x in
         let oy = int_of_float origin.Vector.y in
+
+        (*
         if animm.file = "foxy.png" then
-          Gfx.debug "current frame : %d \n " frame;
+          Gfx.debug "current frame : %d \n " frame;*)
         Gfx.blit_full ctx dst c (frame * width + ox) oy width height screen_x screen_y width height
 
     | Tileset (img,pos,dim) ->

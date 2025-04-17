@@ -25,8 +25,8 @@ let enemy (name, x, y, animation, width, height) =
 
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
+  Forces_system.( register (e :> t));
   Move_system.(register (e:> t));
-  Forces_system.(register( e:> t));
   e#unregister#set (fun () -> delete e);
   e
 
@@ -50,7 +50,7 @@ let enemies1 texture_tbl =
     flip = false;
     frame_duration = 200.0} in
   let positions = [
-    (64*14, 164); (* Premier ennemi à la position (64*8, 164) *)
+    (64*14, 500); (* Premier ennemi à la position (64*8, 164) *)
     (* Ajoute d'autres positions ici si nécessaire *)
   ] in
 
@@ -68,9 +68,17 @@ let enemies1 texture_tbl =
     
     let direction = if phase < 0.5 then -2.0 else 2.0 in
     
+    let anim = enemy#animation#get in
+
+    if direction < 0. then
+      anim.flip <- false
+    else
+      anim.flip <- true;
+
+
     let enemy_speed = Vector.{ 
       x = direction *. speed; 
-      y = 0.1
+      y = 0.0
     } in
     
     enemy#velocity#set enemy_speed

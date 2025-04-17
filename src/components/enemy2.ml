@@ -6,7 +6,6 @@ open Anim
 let delete enemy2 =
   Animation_system.unregister(enemy2 :> Animation.t);
   Collision_system.unregister(enemy2 :> Collision.t );
-  Forces_system.unregister(enemy2 :> Forces.t);
   Move_system.unregister(enemy2 :> Move.t)
 
 
@@ -20,22 +19,15 @@ let enemy2 (name, x, y, animation, width, height) =
 
   e#mass#set 30.1 ;
   e#velocity#set Vector.zero;
-  (*e#sum_forces#set Vector.zero;*)
   e#health#set 100;
   
 
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Move_system.(register (e:> t));
-  (*Forces_system.(register( e:> t));*)
   e#unregister#set (fun () -> delete e);
   e
 
-  (*
-  let enemies21() =  
-
-    enemy2  Cst.("enemy2", 64*8, 200, paddle_color2, 64, 64)
-  *)
 
   let enemies2 () =
     let animation = {
@@ -60,13 +52,6 @@ let enemy2 (name, x, y, animation, width, height) =
     let Global.{enemy; _ } = Global.get () in
     enemy
 
-(*
-    let move_enemy21 enemy time =
-      let amplitude = 0.2 in  (*taille cercles*)
-      let frequency = 20.0 in
-      let enemy_speed = Vector.{ x = 0.1; y = amplitude *. sin (frequency *. time) } in
-      enemy#velocity#set enemy_speed
-  *)  
 let move_enemy2 enemy time =
   let amplitude = 0.1 in  
   let frequency = 2.0 in   
@@ -75,4 +60,3 @@ let move_enemy2 enemy time =
     y = amplitude *. sin (frequency *. time) 
   } in
   enemy#velocity#set enemy_speed
-      

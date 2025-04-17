@@ -29,3 +29,5 @@ spikes.png
 tree-house.png
 eagle-attack.png
 Opossum.png
+slimer-idle.png
+ghost.png

@@ -6,6 +6,8 @@ type t = {
   player : player;
   enemy: enemy list;
   enemy2: enemy2 list;
+  enemy3: enemy3 list;
+  enemy4: enemy4 list;
   map : string array array;
   texture_tbl : (string, Gfx.surface) Hashtbl.t;
   mutable waiting : int;

@@ -28,7 +28,7 @@ let update dt =
   *)
 
   (*Movement enemy1*)
-  let Global.{enemy;enemy2 } = Global.get () in
+  let Global.{enemy;enemy2; enemy3; enemy4 } = Global.get () in
   let current_time = Sys.time () in
 
   List.iter (fun enemy -> Enemy.move_enemy enemy current_time) enemy;
@@ -36,6 +36,9 @@ let update dt =
   (*Movement enemy2*)
 
   List.iter (fun enemy -> Enemy2.move_enemy2 enemy current_time) enemy2;
+  List.iter (fun enemy -> Enemy3.move_enemy3 enemy current_time) enemy3;
+  List.iter (fun enemy -> Enemy4.move_enemy4 enemy current_time) enemy4;
+
 
 
 
@@ -107,6 +110,8 @@ let run () =
     (*Apparament ça ne charge pas avant.*)
   let _walls = Wall.walls texture_tbl in
   let enemy2 = Enemy2.enemies2() in
+  let enemy3 = Enemy3.enemies3() in
+  let enemy4 = Enemy4.enemies4() in
   let player = Player.players() in
 
   let enemy = Enemy.enemies1 texture_tbl in
@@ -115,7 +120,7 @@ let run () =
 
   let _props = Prop.props texture_tbl in
 
-  let global = Global.{ window; ctx; player;enemy;enemy2; map = Cst.map; texture_tbl;waiting = 1; } in
+  let global = Global.{ window; ctx; player;enemy;enemy2;enemy3;enemy4; map = Cst.map; texture_tbl;waiting = 1; } in
   Global.set global;
 
 
