@@ -32,8 +32,8 @@
  let w_width = 32
  let w_height = 32
 
- let p_width = 66
- let p_height = 64
+ let p_width = 50
+ let p_height = 50
 
 
 
@@ -193,7 +193,7 @@ let font_color = Gfx.color 0 0 0 255
 
 let running_animation = 
   Anim.{file = "foxy.png"; 
-        start_pos = Vector.{x = 0.0; y = 66.0}; 
+        start_pos = Vector.{x = 0.0; y = 50.0}; 
         current_pos = Vector.zero;
         current_frame = 0; 
         frames = 5; 
@@ -215,7 +215,7 @@ let idle_animation =
 
 let falling_animation = 
   Anim.{file = "foxy.png"; 
-  start_pos = Vector.{x = 66.0; y = 330.0}; 
+  start_pos = Vector.{x = 50.0; y = 50. *. 7.}; 
   current_pos = Vector.zero;
   current_frame = 0; 
   frames = 0; 
@@ -225,7 +225,7 @@ let falling_animation =
 
 let jumping_animation = 
   Anim.{file = "foxy.png"; 
-  start_pos = Vector.{x = 0.0; y = 330.0}; 
+  start_pos = Vector.{x = 0.0; y = 50. *. 7.}; 
   current_pos = Vector.zero;
   current_frame = 0; 
   frames = 0; 

@@ -20,7 +20,7 @@ let enemy4 (name, x, y, animation, width, height) =
 
   e#mass#set 40.1 ;
   e#velocity#set Vector.zero;
-  e#health#set 100;
+  e#health#set 1;
     (*Forces_system.(register( e:> t));*)
 
   Animation_system.(register (e :> t));

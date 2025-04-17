@@ -9,6 +9,8 @@ val k_add : float -> t -> t
 val sub : t -> t -> t
 (** Subtraction of vectors *)
 
+val neg : t -> t
+
 val mult : float -> t -> t
 (** Multiplication of a floating point number by a vector *)
 

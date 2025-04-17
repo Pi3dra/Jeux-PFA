@@ -20,7 +20,7 @@ let enemy3 (name, x, y, animation, width, height) =
 
   e#mass#set 30.1 ;
   e#velocity#set Vector.zero;
-  e#health#set 100;
+  e#health#set 1;
   
 
   Animation_system.(register (e :> t));
@@ -66,41 +66,32 @@ let enemy3 (name, x, y, animation, width, height) =
       let anim = enemy#animation#get in
       (* Determine velocity based on phase *)
       let enemy_speed =
-        Gfx.debug "Phase: %f\n" phase;
         if phase < move_duration then begin
-          Gfx.debug "Going left 1\n";
           anim.flip <- false;
           Vector.{ x = -.speed; y = 0.0 }
         end
         else if phase < move_duration +. wait_duration then begin
-          Gfx.debug "Waiting 1\n";
           Vector.{ x = 0.0; y = 0.0 }
         end
         else if phase < 2.0 *. move_duration +. wait_duration then begin
-          Gfx.debug "Going left 2\n";
           anim.flip <- false;
           Vector.{ x = -.speed; y = 0.0 }
         end
         else if phase < 2.0 *. move_duration +. 2.0 *. wait_duration then begin
-          Gfx.debug "Waiting 2\n";
           Vector.{ x = 0.0; y = 0.0 }
         end
         else if phase < 3.0 *. move_duration +. 2.0 *. wait_duration then begin
-          Gfx.debug "Going right 1\n";
           anim.flip <- true;
           Vector.{ x = speed; y = 0.0 }
         end
         else if phase < 3.0 *. move_duration +. 3.0 *. wait_duration then begin
-          Gfx.debug "Waiting 3\n";
           Vector.{ x = 0.0; y = 0.0 }
         end
         else if phase < 4.0 *. move_duration +. 3.0 *. wait_duration then begin
-          Gfx.debug "Going right 2\n";
           anim.flip <- true;
           Vector.{ x = speed; y = 0.0 }
         end
         else begin
-          Gfx.debug "Waiting 4\n";
           Vector.{ x = 0.0; y = 0.0 }
         end
       in

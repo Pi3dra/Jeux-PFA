@@ -55,7 +55,6 @@ let () =
       Hashtbl.remove player#playerstate#get Left
   );
   register "Shift" (fun () -> Player.(run_player (player())));
-  register "s" (fun () -> Player.(crouch_player (player())));
   register "z" (fun () -> 
     let time = Sys.time () in
     let cd = 0.1 in 
@@ -72,4 +71,3 @@ let () =
       Player.(shoot_player (player()))
     end
   );
-  register_release "s" (fun () -> Player.(stand_player (player())))

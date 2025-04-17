@@ -3,6 +3,7 @@ type t = { x : float; y : float }
 let add a b = { x = a.x +. b.x; y = a.y +. b.y }
 let sub a b = { x = a.x -. b.x; y = a.y -. b.y }
 
+let neg v = { x = -.v.x ; y = -.v.y}
 
 let mult k a = { x = k*. a.x; y = k*. a.y }
 

@@ -31,3 +31,4 @@ eagle-attack.png
 Opossum.png
 slimer-idle.png
 ghost.png
+heart-sprites.png

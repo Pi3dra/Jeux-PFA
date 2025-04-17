@@ -22,7 +22,7 @@ let player (name, x, y, animation) =
   e#mass#set 30.0 ;
   e#velocity#set Vector.zero;
   e#sum_forces#set Vector.zero;
-  e#health#set 100;
+  e#health#set 6;
 
   let state_tbl = Hashtbl.create 10 in
   Hashtbl.replace state_tbl Idle ();
@@ -39,7 +39,7 @@ let player (name, x, y, animation) =
 
 let players () =  
   let animation = {file = "foxy.png"; 
-                   start_pos = Vector.{x = 0.0; y = 66.0}; 
+                   start_pos = Vector.{x = 0.0; y = 50.0}; 
                    current_pos = Vector.zero;
                    current_frame = 0; 
                    frames = 5; 
@@ -90,28 +90,18 @@ let jump_player player =
     player#sum_forces#set (Vector.add player#sum_forces#get Vector.{x ; y = -1.5});
   end
 
-  let crouch_player player = 
-    let state_tbl = player#playerstate#get in
-    if not (Hashtbl.mem state_tbl Crouching) then begin
-      let pos = player#position#get in
-      let pbox = player#box#get in
-      player#position#set Vector.{x = pos.x; y = pos.y +. 64.};
-      player#box#set Rect.{width = pbox.width; height = pbox.height / 2};
-      Hashtbl.replace state_tbl Crouching () (* Replace to set Crouching *)
-    end
 
+let shoot_player player = 
+  let (pos: Vector.t) = player#position#get in
+  let (box: Rect.t) = player#box#get in
+  let v = player#velocity#get in
 
-    let shoot_player player = 
-      let (pos: Vector.t) = player#position#get in
-      let (box: Rect.t) = player#box#get in
-      let v = player#velocity#get in
-
-      if Hashtbl.mem player#playerstate#get Left then
-          let sum_forces = Vector.add v Vector.{x = -1.; y = 0.0} in 
-          ignore (Bullet.bullet (pos.x -. float_of_int box.width) pos.y  sum_forces)
-      else
-          let sum_forces = Vector.add v Vector.{x = 1.; y = 0.0} in
-          ignore (Bullet.bullet (pos.x +. 2. *.(float_of_int box.width)) pos.y  sum_forces)
+  if Hashtbl.mem player#playerstate#get Left then
+    let sum_forces = Vector.add v Vector.{x = -1.; y = 0.0} in 
+    ignore (Bullet.bullet (pos.x -. float_of_int box.width) pos.y  sum_forces)
+  else
+    let sum_forces = Vector.add v Vector.{x = 1.; y = 0.0} in
+    ignore (Bullet.bullet (pos.x +. 2. *.(float_of_int box.width)) pos.y  sum_forces)
     
     
       (* 
@@ -227,14 +217,3 @@ let debug_states player =
   Hashtbl.iter (fun k _ -> Gfx.debug "%s "  (state_to_string k)) player#playerstate#get ;
   Gfx.debug "\n"
 
-
-let stand_player player = 
-  let state_tbl = player#playerstate#get in
-  if Hashtbl.mem state_tbl Crouching then begin
-    let pos = player#position#get in
-    let pbox = player#box#get in
-    player#position#set Vector.{x = pos.x; y = pos.y -. 64.};
-    player#box#set Rect.{width = pbox.width; height = pbox.height * 2};
-    Hashtbl.remove state_tbl Crouching;
-    Hashtbl.replace state_tbl Standing ()
-end

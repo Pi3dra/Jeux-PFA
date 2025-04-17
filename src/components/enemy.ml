@@ -21,7 +21,7 @@ let enemy (name, x, y, animation, width, height) =
   e#mass#set 30.0 ;
   e#velocity#set Vector.zero;
   e#sum_forces#set Vector.zero;
-  e#health#set 100;
+  e#health#set 1;
 
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
@@ -32,11 +32,6 @@ let enemy (name, x, y, animation, width, height) =
 
   
 let healt enemy = enemy#health#get
-
-(*
-let enemies () =  enemy  Cst.("enemy1", 64*8, 164, Cst.paddle_color2, 64, 128)
-*)
-
 
 (*TODO: ANIMATE THIS*)
 let enemies1 texture_tbl =
@@ -58,28 +53,23 @@ let enemies1 texture_tbl =
   List.map (fun (x, y) -> enemy Cst.("enemy1", x, y,animation, 70, 56)) positions
   
 
-    
+let move_enemy enemy time =
+  let speed = 0.1 in  
+  let period = 2.0 in    
+  let phase = mod_float time period /. period in
+  let direction = if phase < 0.5 then -2.0 else 2.0 in
+  let anim = enemy#animation#get in
 
-  let move_enemy enemy time =
-    let speed = 0.1 in  
-    let period = 2.0 in  
-    
-    let phase = mod_float time period /. period in
-    
-    let direction = if phase < 0.5 then -2.0 else 2.0 in
-    
-    let anim = enemy#animation#get in
-
-    if direction < 0. then
-      anim.flip <- false
-    else
-      anim.flip <- true;
+  if direction < 0. then
+    anim.flip <- false
+  else
+    anim.flip <- true;
 
 
-    let enemy_speed = Vector.{ 
-      x = direction *. speed; 
-      y = 0.0
-    } in
+  let enemy_speed = Vector.{ 
+    x = direction *. speed; 
+    y = 0.0
+  } in
     
-    enemy#velocity#set enemy_speed
+  enemy#velocity#set enemy_speed
   

@@ -19,6 +19,8 @@ let penetration_vector s_pos s_rect =
     let n1 = min_norm n0 Vector.{ x = 0.0; y = float s_rect.height +. s_pos.y } in
     let n2 = min_norm n1 Vector.{ x = s_pos.x; y = 0.0 } in
     min_norm n2 Vector.{ x = float s_rect.width +. s_pos.x; y = 0.0 }
+
+
   
 let has_origin v r =
   v.x < 0.0
