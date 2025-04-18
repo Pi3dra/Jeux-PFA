@@ -1,7 +1,7 @@
 open Anim
 
 (* Camera offset: adjust to position player on screen *)
-let camera_offset = Vector.{ x = float_of_int ( Cst.window_width / 2); y = float_of_int (2*Cst.window_height/3  ) } 
+let camera_offset = Vector.{ x = float_of_int ( Cst.window_width / 2); y = float_of_int (Cst.window_height/2  ) } 
 
 let get_camera_pos () =
   let Global.{player} = Global.get () in

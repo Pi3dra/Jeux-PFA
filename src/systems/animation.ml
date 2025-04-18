@@ -22,6 +22,8 @@ let update dt el =
 
     let tileset = anim.file in
 
+    
+
     let loaded_texture = 
       match tileset with  
       | "Red" -> red
@@ -48,7 +50,10 @@ let update dt el =
     
     Texture.draw ctx surface pos box loaded_texture (Some anim);
 
-    Gfx.reset_transform ctx
+    Gfx.reset_transform ctx;
+
+    if e#tag#get = Remove_on_end && anim.current_frame = anim.frames - 1 then
+      e#unregister#get ();
   ) el;
 
   Gfx.commit ctx

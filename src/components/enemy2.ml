@@ -1,4 +1,4 @@
-open Ecs
+(*open Ecs
 open Component_defs
 open System_defs
 open Anim
@@ -12,7 +12,7 @@ let delete enemy2 =
 let enemy2 (name, x, y, animation, width, height) =
   let e = new enemy2 name in
   e#animation#set animation;
-  e#tag#set Enemy2;
+  e#tag#set Enemy2; (*EAGLE*)
   e#position#set Vector.{x = float x; y = float y};
   e#box#set Rect.{width; height};
   
@@ -25,7 +25,10 @@ let enemy2 (name, x, y, animation, width, height) =
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Move_system.(register (e:> t));
-  e#unregister#set (fun () -> delete e);
+  e#unregister#set (fun () -> 
+    delete e;
+    let Vector.{x;y} = e#position#get in
+    ignore (Animated_prop.animated_prop (int_of_float x, int_of_float y, Cst.death_animation)) );
   e
 
 
@@ -33,12 +36,12 @@ let enemy2 (name, x, y, animation, width, height) =
     let animation = {
       file = "eagle-attack.png"; 
       start_pos = Vector.zero;
-      current_pos = Vector.zero;
       current_frame = 0; 
       frames = 4; 
       last_frame_time = ref 0.0;
       flip = false;
-      frame_duration = 200.0} in
+      frame_duration = 200.0;
+      force_animation = false} in
 
     let positions2 = [
       (64*8, 300);
@@ -53,10 +56,5 @@ let enemy2 (name, x, y, animation, width, height) =
     enemy
 
 let move_enemy2 enemy time =
-  let amplitude = 0.1 in  
-  let frequency = 2.0 in   
-  let enemy_speed = Vector.{ 
-    x = amplitude *. cos (frequency *. time); 
-    y = amplitude *. sin (frequency *. time) 
-  } in
-  enemy#velocity#set enemy_speed
+
+*)

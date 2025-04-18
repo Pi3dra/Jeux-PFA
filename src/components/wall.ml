@@ -3,7 +3,7 @@ open System_defs
 
 
 
-let wall (x, y, txt) =
+let wall (x, y, txt, spike) =
   let e = new wall "wall" in
   e#texture#set txt;
   e#position#set Vector.{x = float x; y = float y};
@@ -12,8 +12,11 @@ let wall (x, y, txt) =
   e#mass#set infinity(* infinity mass*);
   e#velocity#set Vector.zero;
   e#sum_forces#set Vector.zero;
-  e#tag#set Wall;
-
+  
+  if spike then
+    e#tag#set Spike
+  else 
+    e#tag#set Wall;
 
   Draw_system.(register (e :> t));
   Collision_system.(register (e :> t));
@@ -22,27 +25,7 @@ let wall (x, y, txt) =
 
 let init_texture texture_tbl str =
   let pos = Cst.char_to_vect str in
-
   match Hashtbl.find_opt texture_tbl "tileset.png" with
     None -> Anim.red
     | Some t -> Anim.Tileset (t,pos,None)
   
-
-
-let walls texture_tbl =
-  let walls = ref [] in
-  let xpos = ref 0 in 
-  let ypos = ref 0 in 
-    
-  Array.iter (fun y ->
-    Array.iter (fun block ->
-      if Cst.str_of_ints block  then begin
-        let w = wall (!xpos, !ypos, init_texture texture_tbl block) in
-        walls := w :: !walls
-      end;
-      xpos := !xpos + Cst.w_width
-    ) y;
-    xpos := 0;
-    ypos := !ypos + Cst.w_height
-  ) Cst.map;
-      

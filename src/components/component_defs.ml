@@ -52,7 +52,8 @@ class remove_tag () =
     method remove_tag = r
 end
 
-type tag = Wall | No_tag | Player | Bullet | Enemy1 | Enemy2 | Enemy3 | Enemy4
+type tag = Wall | No_tag | Player | Bullet | Opossum | Eagle | Slime | Ghost | Spike
+          | Remove_on_end
 
 let tag_tostring t =
   match t with
@@ -154,6 +155,8 @@ class  drawable () =
 class  animated() =
   object
     inherit Entity.t ()
+    inherit tagged ()
+    inherit removable ()
     inherit position () 
     inherit box ()
     inherit animation ()
@@ -182,7 +185,7 @@ class player name =
     inherit movable ()
   end
 
-  class enemy name =
+  class ground_enemy name =
   object
     inherit Entity.t ~name()
     inherit animated()
@@ -192,7 +195,7 @@ class player name =
     inherit enemy_direction()
   end
 
-class enemy2 name =
+class fliying_enemy name =
   object
     inherit Entity.t ~name()
     inherit animated()
@@ -202,25 +205,6 @@ class enemy2 name =
     inherit enemy_direction()
   end
 
-class enemy3 name =
-  object
-    inherit Entity.t ~name()
-    inherit animated()
-    inherit physics()
-    inherit collidable()
-    inherit movable()
-    inherit enemy_direction()
-  end  
-
-class enemy4 name =
-  object
-    inherit Entity.t ~name()
-    inherit animated()
-    inherit physics()
-    inherit collidable()
-    inherit movable()
-    inherit enemy_direction()
-  end  
 
 class bullet name = 
   object
@@ -247,4 +231,12 @@ class prop name =
   object
     inherit Entity.t ~name ()
     inherit drawable () 
+end
+
+class animated_prop name =
+  object
+    inherit Entity.t ~name ()
+    inherit tagged ()
+    inherit removable ()
+    inherit animated () 
 end

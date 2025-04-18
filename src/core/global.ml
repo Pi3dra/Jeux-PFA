@@ -4,10 +4,8 @@ type t = {
   window : Gfx.window;
   ctx : Gfx.context;
   player: player;
-  enemy: enemy list;
-  enemy2: enemy2 list;
-  enemy3: enemy2 list;
-  enemy4: enemy4 list;
+  ground_enemies: ground_enemy list;
+  fliying_enemies: fliying_enemy list;
   map : string array array;
   texture_tbl: (string , Gfx.surface) Hashtbl.t;
   mutable waiting : int;

@@ -12,22 +12,30 @@ let rec iter_pairs f s =
     iter_pairs f s'
 
 
-let handle_player_enemy_collision player_entity enemy_entity enemy_tag (pn: Vector.t) negate_pn =
+let handle_player_enemy_collision player_entity enemy enemy_tag (pn: Vector.t) negate_pn =
+  let Global.{player} = Global.get() in
   match enemy_tag with
-  | Enemy1 | Enemy2 | Enemy3 | Enemy4 ->
+  | Opossum | Eagle | Slime | Ghost | Spike ->
       (* Collision top down*)
       if pn.y > 0.0 then begin
         
-        let enemy_health = enemy_entity#health#get in
+        if enemy_tag = Spike then begin
+          player#animation#set Cst.hurt_animation;
+          player#health#set (player#health#get - 1);
+          if player#health#get = 0 then
+            player_entity#unregister#get ()
+        end;
+
+        let enemy_health = enemy#health#get in
         let new_enemy_health = enemy_health - 1 in
 
-        if new_enemy_health <= 0 then
-          enemy_entity#unregister#get ()
+        if new_enemy_health <= 0 then begin
+          enemy#unregister#get ();
+        end
         else
-          enemy_entity#health#set new_enemy_health;
-          Gfx.debug "%d \n" enemy_entity#health#get ;
+          enemy#health#set new_enemy_health;
 
-        let vertical_rebound_strength = 1.5 in
+        let vertical_rebound_strength = 1.2 in
         player_entity#velocity#set (Vector.add player_entity#velocity#get
           Vector.{x = 0.0; y = -.vertical_rebound_strength})
 
@@ -53,6 +61,7 @@ let handle_player_enemy_collision player_entity enemy_entity enemy_tag (pn: Vect
 
           let rebound_velocity = Vector.{x = velocity2.x ; y = velocity2.y -. 0.7} in
 
+          player#animation#set Cst.hurt_animation;
           player_entity#velocity#set (Vector.add player_entity#velocity#get rebound_velocity)
         end
       end
@@ -111,7 +120,7 @@ let update _ el =
                 Hashtbl.replace player#playerstate#get Standing ();
                 e2#position#set (Vector.add e2#position#get offset)
 
-          | (Bullet, Enemy1) ->
+          | (Bullet, Opossum) ->
               let current_health = e2#health#get in
               let new_health = current_health - 50 in
               if new_health <= 0 then begin
@@ -122,7 +131,7 @@ let update _ el =
                 e1#unregister#get ()
               end
           
-          | (Enemy1, Bullet) ->
+          | (Opossum, Bullet) ->
               let current_health = e1#health#get in
               let new_health = current_health - 50 in
               if new_health <= 0 then begin
@@ -134,11 +143,8 @@ let update _ el =
               end
 
           | (enemy, Player) ->
-              Gfx.debug "case1 pn: %f %f \n" pn.x pn.y;
               handle_player_enemy_collision e2 e1 enemy pn true
-            
           | (Player, enemy) ->
-            Gfx.debug "case2 pn: %f %f \n" pn.x pn.y;
               let inverse_pn = Vector.mult (-.1.0) pn in
               handle_player_enemy_collision e1 e2 enemy inverse_pn false
 

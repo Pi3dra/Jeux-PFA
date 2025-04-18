@@ -2,10 +2,40 @@ open System_defs
 open Component_defs
 open Ecs
 
-(*
-TODO: Make player shoot balls and destory them on collision*)
 
 
+let init_everything_everywhere_all_at_once texture_tbl=
+    (*let walls = ref [] in*)
+    let xpos = ref 0 in 
+    let ypos = ref 0 in 
+
+    let g_enemies = ref [] in
+    let f_enemies = ref [] in
+      
+    Array.iter (fun y ->
+      Array.iter (fun block ->
+
+        (*Cet if peut etre ajoute a la fonction wall*)
+        if block = "21" || block = "22" || block = "23" then
+          ignore (Wall.wall (!xpos, !ypos, Wall.init_texture texture_tbl block, true))
+        else if Cst.str_of_ints block  then 
+          ignore (Wall.wall (!xpos, !ypos, Wall.init_texture texture_tbl block, false))
+
+        else if block = "OP" || block = "SL" then
+          g_enemies := (Ground_enemy.ground_enemy ("ge",!xpos ,!ypos, Cst.char_to_tag block)) :: !g_enemies
+        else if block = "GH" || block = "EA" then
+          f_enemies := (Fliying_enemy.fliying_enemy ("fe", !xpos ,!ypos, Cst.char_to_tag block)) :: !f_enemies
+
+        else if not(Cst.str_of_ints block) && block <> "  " then
+          ignore (Prop.prop (!xpos, !ypos, Prop.init_texture texture_tbl block));
+
+        xpos := !xpos + Cst.w_width
+      ) y;
+      xpos := 0;
+      ypos := !ypos + Cst.w_height
+    ) Cst.map;
+
+  (!g_enemies,!f_enemies)
 
 let update dt =
 
@@ -28,24 +58,19 @@ let update dt =
   *)
 
   (*Movement enemy1*)
-  let Global.{enemy;enemy2; enemy3; enemy4 } = Global.get () in
+  let Global.{ground_enemies;fliying_enemies; player } = Global.get () in
   let current_time = Sys.time () in
 
-  List.iter (fun enemy -> Enemy.move_enemy enemy current_time) enemy;
-
-  (*Movement enemy2*)
-
-  List.iter (fun enemy -> Enemy2.move_enemy2 enemy current_time) enemy2;
-  List.iter (fun enemy -> Enemy3.move_enemy3 enemy current_time) enemy3;
-  List.iter (fun enemy -> Enemy4.move_enemy4 enemy current_time) enemy4;
-
-
+  List.iter (fun enemy -> Ground_enemy.move_ground_enemy enemy current_time) ground_enemies;
+  List.iter (fun enemy -> Fliying_enemy.move_fliying_enemy enemy current_time) fliying_enemies;
 
 
   let () = Input.handle_input () in
   (*playersate*)
   Player.update_state();
-  Player.update_anim();
+
+  if Anim.can_change_anim player#animation#get then
+    Player.update_anim();
  
   Collision_system.update dt;
   Forces_system.update dt;
@@ -107,20 +132,21 @@ let run () =
     );
 
 
-    (*Apparament ça ne charge pas avant.*)
+  (*Apparament ça ne charge pas avant.*)
+
+  (*
   let _walls = Wall.walls texture_tbl in
+  let enemy = Enemy.enemies1 texture_tbl in
   let enemy2 = Enemy2.enemies2() in
   let enemy3 = Enemy3.enemies3() in
-  let enemy4 = Enemy4.enemies4() in
+  let enemy4 = Enemy4.enemies4() in*)
+  let (ground_enemies, fliying_enemies) = 
+         init_everything_everywhere_all_at_once texture_tbl in
+
   let player = Player.players() in
+  (*let _props = Prop.props texture_tbl in*)
 
-  let enemy = Enemy.enemies1 texture_tbl in
-
-
-
-  let _props = Prop.props texture_tbl in
-
-  let global = Global.{ window; ctx; player;enemy;enemy2;enemy3;enemy4; map = Cst.map; texture_tbl;waiting = 1; } in
+  let global = Global.{ window; ctx; player;ground_enemies;fliying_enemies; map = Cst.map; texture_tbl;waiting = 1; } in
   Global.set global;
 
 

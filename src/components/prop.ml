@@ -32,26 +32,4 @@ let init_texture texture_tbl str =
         | Some t ->  Anim.Tileset(t,p,Some box )
     end
 
-  
 
-
-  
-
-
-let props texture_tbl =
-  let props = ref [] in
-  let xpos = ref 0 in 
-  let ypos = ref 0 in 
-    
-  Array.iter (fun y ->
-    Array.iter (fun block ->
-      if not(Cst.str_of_ints block) && block <> "  " then begin
-        let w = prop (!xpos, !ypos, init_texture texture_tbl block) in
-        props := w :: !props
-      end;
-      xpos := !xpos + Cst.w_width
-    ) y;
-    xpos := 0;
-    ypos := !ypos + Cst.w_height
-  ) Cst.map;
-      

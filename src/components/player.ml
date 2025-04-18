@@ -40,12 +40,12 @@ let player (name, x, y, animation) =
 let players () =  
   let animation = {file = "foxy.png"; 
                    start_pos = Vector.{x = 0.0; y = 50.0}; 
-                   current_pos = Vector.zero;
                    current_frame = 0; 
                    frames = 5; 
                    last_frame_time = ref 0.0;
                    flip = false;
-                   frame_duration = 100.0} in
+                   frame_duration = 100.0;
+                   force_animation = false} in
 
   player  Cst.("player", 64*10, 500, animation)
 
