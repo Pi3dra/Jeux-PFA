@@ -4,10 +4,12 @@ type t = {
   window : Gfx.window;
   ctx : Gfx.context;
   player: player;
-  ground_enemies: ground_enemy list;
-  fliying_enemies: fliying_enemy list;
-  map : string array array;
+  respawneables: respawns list;
+  move_f: movable -> float -> unit;  
+  move_g: movable -> float -> unit;
+
   texture_tbl: (string , Gfx.surface) Hashtbl.t;
+  is_sdl: bool;
   mutable waiting : int;
 }
 

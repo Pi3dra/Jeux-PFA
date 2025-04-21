@@ -3,7 +3,6 @@ type t = { width : int; height : int }
 
 
 let mdiff v1 r1 v2 r2 =
-  (* We use the Minkowski difference of Box1 and Box2 *)
   let x = v1.x -. v2.x -. float r2.width in
   let y = v1.y -. v2.y -. float r2.height in
   let h = r1.height + r2.height in
@@ -38,3 +37,6 @@ let has_origin v r =
 let intersect v1 r1 v2 r2 =
   let v, r = mdiff v1 r1 v2 r2 in
   has_origin v r
+
+let k_mul k r =
+  {width = r.width*k ; height = r.height*k}

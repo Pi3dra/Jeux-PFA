@@ -31,3 +31,6 @@ slimer-idle.png
 ghost.png
 heart-sprites.png
 death.png
+cherry.png
+item-feedback.png
+item-break.png

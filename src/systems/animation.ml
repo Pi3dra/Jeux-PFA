@@ -21,20 +21,18 @@ let update dt el =
     let anim = e#animation#get in
 
     let tileset = anim.file in
-
     
-
     let loaded_texture = 
       match tileset with  
       | "Red" -> red
       | key -> 
           match Hashtbl.find_opt texture_tbl key with
-          | Some img -> Animation(img)
+          | Some img -> Animation(anim,img)
           | None -> red
     in
 
+    (*Logique pour avancer les frames*)
     anim.last_frame_time := !(anim.last_frame_time) +. delta_time;
-
     if !(anim.last_frame_time) >= anim.frame_duration then begin
       anim.last_frame_time := !(anim.last_frame_time) -. anim.frame_duration;  
       
@@ -46,14 +44,14 @@ let update dt el =
     end;
 
     if anim.flip then  
-      Gfx.set_transform ctx 0.0 true false;
-    
-    Texture.draw ctx surface pos box loaded_texture (Some anim);
 
+    Gfx.set_transform ctx 0.0 true false;
+    Texture.draw ctx surface pos box loaded_texture ;
     Gfx.reset_transform ctx;
 
+    (*Animations/objets ephemeres/particules*)
     if e#tag#get = Remove_on_end && anim.current_frame = anim.frames - 1 then
-      e#unregister#get ();
+      e#unregister#get false;
   ) el;
 
   Gfx.commit ctx

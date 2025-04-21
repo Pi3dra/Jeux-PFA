@@ -10,3 +10,5 @@ module Move_system = System.Make(Move)
 module Forces_system = System.Make(Forces)
 
 module Animation_system = System.Make(Animation)
+
+module Trigger_system = System.Make(Trigger)

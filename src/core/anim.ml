@@ -1,4 +1,3 @@
-
 type t = {
   file: string;
   start_pos: Vector.t;
@@ -9,12 +8,22 @@ type t = {
   frame_duration: float;
   force_animation: bool;
 }
-  
+
+type texture_meta =
+  | Clr of Gfx.color
+  | Img of string
+              (*Tileset a utiliser, position ou se trouve*)
+  | Tst of string * Rect.t
+
+
+
+
 type tex =
     Image of Gfx.surface
   | Color of Gfx.color
-  | Animation of Gfx.surface 
-  | Tileset of (Gfx.surface * Vector.t * Vector.t option)
+  | Animation of (t*Gfx.surface) 
+  (*Todo Change this*)
+  | Tileset of (Gfx.surface * Rect.t * Rect.t option)
 
 let blue = Color (Gfx.color 0 0 255 255)
 let red = Color (Gfx.color 255 0 0 255)
@@ -41,3 +50,4 @@ let default_anim file = {
   frame_duration = 100.0;
   force_animation = false
 }
+

@@ -12,21 +12,11 @@ class box  () =
     method box = r
   end
 
-(*
 class texture  () =
-  let r = Component.init ("Red") in
+  let r = Component.init (Anim.Img "tileset.png") in
   object
     method texture = r
   end
-*)
-
-class texture  () =
-  let r = Component.init (Anim.Color(Gfx.color 255 255 255 255)) in
-  object
-    method texture = r
-  end
-
-
 
 class animation () =
   let r = Component.init( Anim.default_anim "atlas.png") in
@@ -41,26 +31,22 @@ class health () =
   end
 
 class removable () =
-  let r = Component.init (fun ()->()) in
+  let r = Component.init (fun (a:bool)->()) in
   object 
     method unregister = r
 end
 
-class remove_tag () =
-  let r = Component.init false in
-  object
-    method remove_tag = r
+class respawnable () =
+  let r = Component.init (fun ()->()) in
+  object 
+    method register = r
 end
 
-type tag = Wall | No_tag | Player | Bullet | Opossum | Eagle | Slime | Ghost | Spike
-          | Remove_on_end
 
-let tag_tostring t =
-  match t with
-  | No_tag -> "No_tag"
-  | Player -> "Player"
-  | Bullet -> "Bullet"
-  | _ -> "None"
+
+
+type tag = Wall | No_tag | Player | Bullet | Opossum | Eagle | Slime | Ghost | Spike
+          | Remove_on_end | Cherry | Removed | Checkpoint | Falling_Platform | Platform | Box | BBox
 
 
 class tagged ()  =
@@ -69,8 +55,6 @@ class tagged ()  =
     method tag = r
   end
 
-
-(*velocity*)
 class velocity () =
   let r = Component.init (Vector.zero) in
   object 
@@ -96,11 +80,7 @@ class id =
   end
 
 
-
-
-type state = Moving | Standing | Crouching | OnAirUp | OnAirDown | Idle | Left | Right
-
-(*Code to chang*)
+type state = Moving | Standing | Crouching | OnAirUp | OnAirDown | Idle | Left | Right | Boosted
 
 class playerstate =
   let r = Component.init (Hashtbl.create 10 : (state, unit) Hashtbl.t) in
@@ -108,31 +88,52 @@ object
   method playerstate = r
 end
 
-type direction = L | R
+class last_checkpoint () = 
+  let r = Component.init (Vector.zero) in
+  object
+    method last_checkpoint = r
+  end
 
-class enemy_direction () =
-  let r = Component.init L in
-object
-  method enemy_direction = r
-end
+class last_damage_time () =
+  let r = Component.init (0.) in
+  object
+    method last_damage_time = r
+  end
+
+
 
 (** Interfaces : ici on liste simplement les types des classes dont on hérite
     si deux classes définissent les mêmes méthodes, celles de la classe écrite
     après sont utilisées (héritage multiple).
 *)
 
+class respawns () =
+  object
+  inherit respawnable ()
+  inherit removable ()
+  end
+
 
 class  collidable () =
   object
     inherit Entity.t () 
+    inherit respawnable()
     inherit tagged()
     inherit removable()
-    inherit remove_tag()
     inherit position ()
     inherit velocity () 
     inherit box ()
     inherit mass ()
     inherit health ()
+  end
+
+class triggerable () =
+  object
+    inherit Entity.t ()
+    inherit tagged ()
+    inherit removable ()
+    inherit position ()
+    inherit box ()
   end
 
 class  physics () =
@@ -167,6 +168,7 @@ class  movable () =
   inherit Entity.t ()
   inherit position ()
   inherit velocity ()
+  inherit animated()
   inherit tagged () (*CHANGED*)
   end
 
@@ -183,26 +185,27 @@ class player name =
     inherit physics () 
     inherit collidable ()
     inherit movable ()
+    inherit last_checkpoint () 
+    inherit last_damage_time()
   end
 
   class ground_enemy name =
   object
     inherit Entity.t ~name()
+    inherit respawns()
     inherit animated()
     inherit physics()
     inherit collidable()
     inherit movable()
-    inherit enemy_direction()
   end
 
 class fliying_enemy name =
   object
     inherit Entity.t ~name()
+    inherit respawns()
     inherit animated()
-    inherit physics()
     inherit collidable()
     inherit movable()
-    inherit enemy_direction()
   end
 
 
@@ -220,9 +223,10 @@ class bullet name =
 class wall name =
   object
     inherit Entity.t ~name ()
-
+    inherit respawns()
     inherit tagged ()
     inherit drawable () 
+    inherit animated()
     inherit collidable ()
     inherit physics ()
 end
@@ -240,3 +244,27 @@ class animated_prop name =
     inherit removable ()
     inherit animated () 
 end
+
+class pickable_object name =
+  object
+  inherit Entity.t ~name ()
+  inherit respawns()
+  inherit triggerable ()
+  inherit animated ()
+  end
+
+class checkpoint name =
+  object
+  inherit Entity.t ~name ()
+  inherit triggerable ()
+  inherit drawable ()
+  end
+
+
+class platform name =
+  object
+    inherit Entity.t ~name ()
+    inherit tagged ()
+    inherit drawable()
+    inherit collidable ()
+  end
