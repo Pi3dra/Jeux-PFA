@@ -9,6 +9,7 @@ let init_everything_everywhere_all_at_once () =
   let ypos = ref 0 in
   let respawneables = ref [] in
 
+
   Array.iter
     (fun y ->
       Array.iter
@@ -57,6 +58,10 @@ let init_everything_everywhere_all_at_once () =
           else if block = "GH" || block = "EA" then
             let tag = Cst.char_to_tag block in
             respawneables := (Fliying_enemy.fliying_enemy (pos, tag) :> respawns) :: !respawneables
+
+          else if block = "BS" then
+            let tag = Cst.char_to_tag block in
+            respawneables := (Boss.boss (pos, tag) :> respawns) :: !respawneables
 
           (*Props Background*)
           else if not (Cst.str_of_ints block) && block <> "  " then begin
@@ -156,6 +161,7 @@ let run is_sdl =
   let global = Global.{ window; ctx; player; respawneables;
                         move_g = Ground_enemy.move_ground_enemy ;
                         move_f = Fliying_enemy.move_fliying_enemy;
+                        move_b = Boss.move_boss;
                         texture_tbl;waiting = 1; is_sdl;} in
   Global.set global;
 

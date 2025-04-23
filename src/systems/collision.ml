@@ -65,7 +65,7 @@ let iter_pairs f s =
 let handle_player_enemy_collision dt enemy enemy_tag (pn: Vector.t) negate_pn =
   let Global.{player} = Global.get() in
     match enemy_tag with
-    | Opossum | Eagle | Slime | Ghost | Spike ->
+    | Opossum | Eagle | Slime | Ghost | Spike | Boss->
     (* ===== Collision par le haut ===== *)
       if pn.y > 0.0 then begin
         damage enemy;

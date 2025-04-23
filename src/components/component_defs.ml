@@ -46,7 +46,7 @@ end
 
 
 type tag = Wall | No_tag | Player | Bullet | Opossum | Eagle | Slime | Ghost | Spike
-          | Remove_on_end | Cherry | Removed | Checkpoint | Falling_Platform | Platform | Box | BBox
+          | Remove_on_end | Cherry | Removed | Checkpoint | Falling_Platform | Platform | Box | BBox |Boss
 
 
 class tagged ()  =
@@ -204,6 +204,26 @@ class fliying_enemy name =
     inherit Entity.t ~name()
     inherit respawns()
     inherit animated()
+    inherit collidable()
+    inherit movable()
+  end
+
+  class boss name =
+  object
+    inherit Entity.t ~name()
+    inherit respawns()
+    inherit animated()
+    inherit physics()
+    inherit collidable()
+    inherit movable()
+  end
+
+  class boss2 name =
+  object
+    inherit Entity.t ~name()
+    inherit respawns()
+    inherit animated()
+    inherit physics()
     inherit collidable()
     inherit movable()
   end
