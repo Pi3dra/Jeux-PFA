@@ -44,6 +44,13 @@ let map =
  let p_width = 50
  let p_height = 50
 
+(*TODO:
+Passer les fonctions move directement a move ,
+corriger boss
+enlever instakill piques
+ajouter piques a l'envers qqpart
+ajouter saut a version sdl
+*)
 
 
 let str_of_ints s = 

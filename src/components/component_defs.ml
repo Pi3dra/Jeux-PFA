@@ -235,16 +235,6 @@ class fliying_enemy name =
     inherit movable()
   end
 
-  class boss2 name =
-  object
-    inherit Entity.t ~name()
-    inherit respawns()
-    inherit animated()
-    inherit physics()
-    inherit collidable()
-    inherit movable()
-  end
-
 
 class bullet name = 
   object
