@@ -51,7 +51,7 @@ let () =
   );
   register "Shift" (fun () -> Player.(run_player (player())));
 
-  register "z" (fun () -> 
+  register " " (fun () -> 
     let time = Sys.time () in
     let cd = 0.1 in 
     if time -. !last_jump >= cd && !z_released && Hashtbl.mem (Player.player())#playerstate#get Standing then begin
@@ -61,6 +61,6 @@ let () =
     end
   );
 
-  register_release "z" (fun () -> 
+  register_release " " (fun () -> 
     z_released := true 
   );
