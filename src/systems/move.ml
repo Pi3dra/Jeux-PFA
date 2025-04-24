@@ -7,7 +7,7 @@ let dt = 1000. /. 60.
 
 let is_enemy tag =
   match tag with
-  | Opossum | Eagle | Ghost | Slime -> true
+  | Opossum | Eagle | Ghost | Slime | Boss -> true
   | _ -> false
 
 let update _dt el =
@@ -20,8 +20,9 @@ let update _dt el =
         let p = e#position#get in
         let np = Vector.add p (Vector.mult dt v) in
         e#position#set np;
-
       
+      
+        (*On aurait pu juste mettre les fonctions ici directement lol*)
         if e#tag#get = Opossum || e#tag#get = Slime then
           move_g e  _dt
         else if e#tag#get = Boss then

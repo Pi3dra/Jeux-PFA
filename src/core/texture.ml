@@ -6,7 +6,22 @@ let camera_offset = Vector.{ x = float_of_int ( Cst.window_width / 2); y = float
 let get_camera_pos () =
   let Global.{player} = Global.get () in
   let player_pos = player#position#get in
-  Vector.{ x = player_pos.x -. camera_offset.x; y = player_pos.y -. camera_offset.y }
+  
+  let tile_size = 32 in
+  let map_width = (Array.length Cst.map.(0)) * tile_size in
+  let map_height = (Array.length Cst.map) * tile_size in 
+  
+  let screen_width = Cst.window_width in
+  let screen_height = Cst.window_height in
+  
+  let desired_x = player_pos.x -. camera_offset.x in
+  let desired_y = player_pos.y -. camera_offset.y in
+  
+  let clamped_x = max 0. (min desired_x (float_of_int (map_width - screen_width))) in
+  let clamped_y = max 0. (min desired_y (float_of_int (map_height - screen_height))) in
+  
+  Vector.{ x = clamped_x; y = clamped_y }
+
 
 let draw ctx dst pos box src =
 

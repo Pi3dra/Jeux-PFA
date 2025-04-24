@@ -34,7 +34,7 @@ let update _dt el =
   let base_bg_x = -200. -. player_x *. parallax_factor in
 
   let base_m = -200. -. player_x *. 0.2 in
-  let base_bg_y = -200. -. player_y *. parallax_factor in
+  let base_bg_y = -200. +. player_y *. parallax_factor  in
 
 
   (*Dessiner textures manquantes*)

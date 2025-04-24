@@ -60,11 +60,12 @@ let iter_pairs f s =
     match s1 () with
     | Seq.Nil -> ()
     | Seq.Cons(e1, s1') ->
+        if e1#on_screen#get then
         Seq.iter (fun e2 ->
           (* On ignore les collisions:
             - Wall et Wall
             - Falling_Platform et Falling_Platform *)
-          if not (
+          if e2#on_screen#get && not (
             (e1#tag#get = Wall && e2#tag#get = Wall) ||
             (e1#tag#get = Falling_Platform && e2#tag#get = Falling_Platform)
           ) then

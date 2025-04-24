@@ -34,3 +34,4 @@ death.png
 cherry.png
 item-feedback.png
 item-break.png
+dino.png

@@ -7,9 +7,8 @@ let prop (pos, box ,txt) =
   e#texture#set txt;
   e#position#set pos;
   e#box#set box;
-  e#on_screen#set false;
+  e#on_screen#set true;
 
-  On_screen_system.(register (e :> t));
   Draw_system.(register (e :> t));
   e
 

@@ -43,7 +43,7 @@ let players () =
                    frame_duration = 100.0;
                    force_animation = false} in
 
-  player  Cst.("player", 64*8, 500, animation)
+  player  Cst.("player", 64*3, 600, animation)
 
 let player () = 
   let Global.{player; _ } = Global.get () in
@@ -108,7 +108,7 @@ let update_state() =
   end;
 
   (*Idle*)
-  if v.x = 0.0 && v.y < 0.03 && v.y > 0. then
+  if v.x = 0.0 && v.y = 0.0 then
     Hashtbl.replace states Idle ()
   else 
     Hashtbl.remove states Idle;
