@@ -55,24 +55,3 @@ let register e =
     register e;
     e
 
-    let move_boss (boss:movable) time =
-      let time = time /. 1000.0 in
-      match boss#tag#get with
-      | Boss ->
-          let speed = 0.8 in
-          let cycle = 3.4 in
-          let phase = mod_float time cycle in
-          let direction = 
-            if phase < 0.7 then 2.0
-            else if phase < 1.7 then 0.0
-            else if phase < 2.4 then -2.0
-            else 0.0
-          in
-          let anim = boss#animation#get in
-          anim.flip <- phase < 1.7;
-          let enemy_speed = Vector.{ 
-            x = direction *. speed; 
-            y = 0.0
-          } in
-          boss#velocity#set enemy_speed
-      | _ -> ()

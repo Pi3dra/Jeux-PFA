@@ -160,13 +160,7 @@ let run is_sdl =
   let respawneables = init_everything_everywhere_all_at_once () in
   let player = Player.players() in
 
-  
-
-  let global = Global.{ window; ctx; player; respawneables;
-                        move_g = Ground_enemy.move_ground_enemy ;
-                        move_f = Fliying_enemy.move_fliying_enemy;
-                        move_b = Boss.move_boss;
-                        texture_tbl;waiting = 1; is_sdl;} in
+  let global = Global.{ window; ctx; player; respawneables;texture_tbl;waiting = 1; is_sdl;} in
   Global.set global;
 
   Gfx.main_loop update (fun () -> ())

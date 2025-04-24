@@ -25,28 +25,17 @@ let respawn player =
 
 
 
-let damage_player player dt =
+let damage_player dmg player dt =
   if dt -. player#last_damage_time#get >= 500. then begin
-    if player#health#get - 1 <= 0 then
+    if player#health#get - dmg <= 0 then
       respawn player
     else begin
       player#animation#set (Cst.hurt_animation());
-      player#health#set (player#health#get - 1);
+      player#health#set (player#health#get - dmg);
       player#last_damage_time#set dt
     end
   end
 
-  let damage_player_spike player dt =
-    if dt -. player#last_damage_time#get >= 500. then begin
-      let new_health = player#health#get - 500 in
-      if new_health <= 0 then
-        respawn player
-      else begin
-        player#animation#set (Cst.hurt_animation());
-        player#health#set new_health;
-        player#last_damage_time#set dt
-      end
-    end
   
 
 let damage entity =
@@ -88,13 +77,13 @@ let handle_player_enemy_collision dt enemy enemy_tag (pn: Vector.t) negate_pn =
 
             (* Special case: Spike *)
         if enemy_tag = Spike then begin
-          damage_player_spike player dt
+          damage_player 2 player dt
           end;
       end
 
       (* ===== Collision par le bas ===== *)
       else if pn.y < 0.0 then begin
-        damage_player player dt
+        damage_player 1 player dt
       end
 
       (* ===== Collision par les cotes ===== *)
@@ -111,7 +100,9 @@ let handle_player_enemy_collision dt enemy enemy_tag (pn: Vector.t) negate_pn =
     
         player#animation#set (Cst.hurt_animation());
         player#velocity#set (Vector.add player#velocity#get rebound_velocity);
-        damage_player player dt
+
+        let dmg = if enemy_tag = Spike then 2 else 1 in
+        damage_player dmg player dt
 
       end
 

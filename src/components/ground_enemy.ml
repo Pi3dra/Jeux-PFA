@@ -22,66 +22,6 @@ let register e =
   Forces_system.( register (e :> t));
   Move_system.(register (e:> t))
 
-let move_ground_enemy (enemy:movable) time =
-  let time = time /. 1000.0 in (* Convert milliseconds to seconds *)
-  match enemy#tag#get with
-  | Opossum ->
-      let speed = 0.1 in
-      let period = 4.0 in (* 4 seconds *)
-      let phase = mod_float time period /. period in
-      let direction = if phase < 0.5 then -2.0 else 2.0 in
-      let anim = enemy#animation#get in
-
-      anim.flip <- direction > 0.0;
-
-      let enemy_speed = Vector.{ 
-        x = direction *. speed; 
-        y = 0.0
-      } in
-
-      enemy#velocity#set enemy_speed
-
-  | Slime ->
-      let speed = 0.1 in
-      let move_duration = 0.5 in
-      let wait_duration = 0.5 in
-      let cycle_duration = 4.0 *. move_duration +. 4.0 *. wait_duration in
-      let phase = mod_float time cycle_duration /. cycle_duration in
-      let anim = enemy#animation#get in
-      let enemy_speed =
-        if phase < (move_duration /. cycle_duration) then begin
-          anim.flip <- false;
-          Vector.{ x = -.speed; y = 0.0 }
-        end
-        else if phase < ((move_duration +. wait_duration) /. cycle_duration) then begin
-          Vector.{ x = 0.0; y = 0.0 }
-        end
-        else if phase < ((2.0 *. move_duration +. wait_duration) /. cycle_duration) then begin
-          anim.flip <- false;
-          Vector.{ x = -.speed; y = 0.0 }
-        end
-        else if phase < ((2.0 *. move_duration +. 2.0 *. wait_duration) /. cycle_duration) then begin
-          Vector.{ x = 0.0; y = 0.0 }
-        end
-        else if phase < ((3.0 *. move_duration +. 2.0 *. wait_duration) /. cycle_duration) then begin
-          anim.flip <- true;
-          Vector.{ x = speed; y = 0.0 }
-        end
-        else if phase < ((3.0 *. move_duration +. 3.0 *. wait_duration) /. cycle_duration) then begin
-          Vector.{ x = 0.0; y = 0.0 }
-        end
-        else if phase < ((4.0 *. move_duration +. 3.0 *. wait_duration) /. cycle_duration) then begin
-          anim.flip <- true;
-          Vector.{ x = speed; y = 0.0 }
-        end
-        else begin
-          Vector.{ x = 0.0; y = 0.0 }
-        end
-      in
-
-      enemy#velocity#set enemy_speed
-  | _ -> ()
-
 let ground_enemy ( pos, tag) : ground_enemy =
   let e = new ground_enemy "ground enemy" in
 
