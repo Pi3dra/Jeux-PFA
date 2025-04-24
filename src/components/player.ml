@@ -21,7 +21,7 @@ let player (name, x, y, animation) =
   let state_tbl = Hashtbl.create 10 in
   Hashtbl.replace state_tbl Idle ();
   e#playerstate#set state_tbl;
-
+  e#on_screen#set true;
 
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));

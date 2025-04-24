@@ -2,6 +2,7 @@ open Component_defs
 open System_defs
 
 let delete animated e =
+  On_screen_system.unregister(e :> On_screen.t);
   Animation_system.unregister(e :> Animation.t)
 
 let animated_prop (x, y, animation) =
@@ -19,5 +20,8 @@ let animated_prop (x, y, animation) =
   ;
   
   e#unregister#set (fun animated -> delete animated e);
+  e#on_screen#set false;
+
+  On_screen_system.(register (e :> t));
   Animation_system.(register (e :> t));
   e

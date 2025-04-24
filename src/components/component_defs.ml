@@ -100,6 +100,11 @@ class last_damage_time () =
     method last_damage_time = r
   end
 
+class on_screen () = 
+  let r = Component.init false in
+  object 
+    method on_screen = r
+  end
 
 
 (** Interfaces : ici on liste simplement les types des classes dont on hérite
@@ -113,11 +118,19 @@ class respawns () =
   inherit removable ()
   end
 
+class loadable () =
+  object 
+  inherit Entity.t () (*obligé de faire ceci je ne comprends pas trop pourquoi*)
+  inherit on_screen ()
+  inherit box ()
+  inherit position ()
+  end
 
 class  collidable () =
   object
     inherit Entity.t () 
     inherit respawnable()
+    inherit on_screen ()
     inherit tagged()
     inherit removable()
     inherit position ()
@@ -143,12 +156,14 @@ class  physics () =
     inherit mass ()
     inherit sum_forces ()
     inherit velocity ()
+    inherit loadable()
   end
 
 class  drawable () =
   object
     inherit Entity.t ()
     inherit position () 
+    inherit loadable ()
     inherit box ()
     inherit texture ()
   end
@@ -161,6 +176,7 @@ class  animated() =
     inherit position () 
     inherit box ()
     inherit animation ()
+    inherit loadable () 
   end
 
 class  movable () =
@@ -169,7 +185,8 @@ class  movable () =
   inherit position ()
   inherit velocity ()
   inherit animated()
-  inherit tagged () (*CHANGED*)
+  inherit tagged ()
+  inherit loadable ()
   end
 
 (** Entités :

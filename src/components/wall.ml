@@ -15,6 +15,7 @@ let delete animated e =
 
   Collision_system.unregister(e :> Collision.t);
   Draw_system.unregister(e :> Draw.t);
+  On_screen_system.(unregister (e :> On_screen.t));
   Move_system.unregister(e :> Move.t)
 
 let register e =
@@ -22,6 +23,7 @@ let register e =
   if tag = BBox || tag = Box then
     Forces_system.(register(e :> t));
 
+  On_screen_system.(register (e :> t));
   Draw_system.(register (e :> t));
   Collision_system.(register (e :> t));
   Move_system.(register (e :> t))
@@ -63,7 +65,7 @@ let rec wall ((pos: Vector.t), box, txt, tag) =
   else 
     e#mass#set infinity;
   
-
+  e#on_screen#set false;
   register e;
   e
 

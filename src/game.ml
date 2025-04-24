@@ -98,17 +98,22 @@ let update dt =
 
   let Global.{respawneables; player } = Global.get () in
 
+  Player.debug_player player;
+
   Player.update_state();
   if Anim.can_change_anim player#animation#get then
     Player.update_anim();
+
+    On_screen_system.update dt;  
+    Forces_system.update dt;
+    Move_system.update dt;   
+    Collision_system.update dt;
+    On_screen_system.update dt;  
+    Trigger_system.update dt;
+    Draw_system.update dt;
+    Animation_system.update dt;
+    let () = Input.handle_input () in
  
-  Collision_system.update dt;
-  Forces_system.update dt;
-  let () = Input.handle_input () in
-  Move_system.update dt;
-  Trigger_system.update dt;
-  Draw_system.update dt;
-  Animation_system.update dt;
 
   None
 

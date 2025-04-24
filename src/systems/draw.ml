@@ -78,34 +78,31 @@ let update _dt el =
   done;
 
  (*============= Dessin Monde/Entités =============*)
-  Seq.iter (fun (e:t) ->
-    let pos = e#position#get in
-    let box = e#box#get in
-    let txt = e#texture#get in
 
-    match txt with  
-    | Img file->
-      begin
-      match Hashtbl.find_opt texture_tbl file with
-        | None -> fallback pos.x pos.y box.width box.height
-        | Some texture -> Texture.draw ctx surface pos box (Anim.Tileset (texture,Rect.{width = 0 ; height = 0},None)) 
 
-      end
+ 
+ Seq.iter (fun (e:t) ->
+   let pos = e#position#get in
+   let box = e#box#get in
 
-    | Tst (file,tilesetpos) ->
-      begin
-      match Hashtbl.find_opt texture_tbl file with
-        | None -> fallback pos.x pos.y box.width box.height
-        | Some texture -> Texture.draw ctx surface pos box (Anim.Tileset (texture,tilesetpos,None)) 
-        
-      end;
-
-    | Clr c -> Texture.draw ctx surface pos box (Anim.Color c) 
-    ;
-
-    (*Texture.draw ctx surface pos box txt None*)
-  ) el;
-
+   if e#on_screen#get then begin
+     let txt = e#texture#get in
+     match txt with  
+     | Img file ->
+         begin
+         match Hashtbl.find_opt texture_tbl file with
+           | None -> fallback pos.x pos.y box.width box.height
+           | Some texture -> Texture.draw ctx surface pos box (Anim.Tileset (texture, Rect.{width = 0; height = 0}, None)) 
+         end
+     | Tst (file, tilesetpos) ->
+         begin
+         match Hashtbl.find_opt texture_tbl file with
+           | None -> fallback pos.x pos.y box.width box.height
+           | Some texture -> Texture.draw ctx surface pos box (Anim.Tileset (texture, tilesetpos, None)) 
+         end
+     | Clr c -> Texture.draw ctx surface pos box (Anim.Color c)
+   end
+ ) el;
   (*============= Dessin UI (coeurs lol) =============*)
 
   let start_pos = Vector.{x=10.; y=10.} in

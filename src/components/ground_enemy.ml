@@ -3,18 +3,20 @@ open Component_defs
 open System_defs
 open Anim
 
-let delete animates enemy =
+let delete animates e =
   if animates then begin
-    let Vector.{x;y} = enemy#position#get in
+    let Vector.{x;y} = e#position#get in
     ignore (Animated_prop.animated_prop (int_of_float x, int_of_float y, Cst.death_animation()))
   end; 
   
-  Collision_system.unregister(enemy :> Collision.t );
-  Animation_system.unregister(enemy :> Animation.t);
-  Forces_system.unregister(enemy :> Forces.t);
-  Move_system.unregister(enemy :> Move.t)
+  On_screen_system.unregister(e :> On_screen.t);
+  Collision_system.unregister(e :> Collision.t );
+  Animation_system.unregister(e :> Animation.t);
+  Forces_system.unregister(e :> Forces.t);
+  Move_system.unregister(e :> Move.t)
 
 let register e =
+  On_screen_system.(register (e :> t));
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Forces_system.( register (e :> t));
@@ -104,13 +106,11 @@ let ground_enemy ( pos, tag) : ground_enemy =
   e#register#set (fun () ->
     register e
   );
-
-  (*
-  e#move_func#set ( fun dt -> (move_ground_enemy e dt));*)
     
   e#unregister#set (fun animates -> 
     delete animates e);
 
+  e#on_screen#set false;
   register e;
   e
 

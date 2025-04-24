@@ -7,11 +7,13 @@ let delete animated e =
       ignore (Animated_prop.animated_prop (int_of_float x, int_of_float y, Cst.item_animation ()))
     end;
 
+    On_screen_system.(unregister (e :> On_screen.t));
     Trigger_system.unregister(e :> Trigger.t);
     Animation_system.unregister(e :> Animation.t)
 
 
 let register e =
+  On_screen_system.(register (e :> t));
   Trigger_system.(register (e :> t));
   Animation_system.(register (e :> t))
 
@@ -27,6 +29,7 @@ let pickable_object (pos, txt) =
   e#unregister#set(fun animated -> delete animated e);
 
   e#register#set (fun () -> register e);
-    
+  
+  e#on_screen#set false;
   register e;
   e

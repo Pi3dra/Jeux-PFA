@@ -11,4 +11,6 @@ module Forces_system = System.Make(Forces)
 
 module Animation_system = System.Make(Animation)
 
+module On_screen_system = System.Make(On_screen)
+
 module Trigger_system = System.Make(Trigger)

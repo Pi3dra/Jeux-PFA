@@ -11,7 +11,7 @@ let update _dt el =
     (fun (e : t) ->
       let m = e#mass#get in
       (*TODO ICI il y a plus de BULLET*)
-      if Float.is_finite m then begin
+      if Float.is_finite m && e#on_screen#get then begin
         let apply_gravity = e#tag#get <> Bullet in
         
         let f = 
@@ -24,6 +24,10 @@ let update _dt el =
         let v = e#velocity#get in
         let drag = Vector.{ x = v.x *. -0.02; y = 0.0 } in
         e#velocity#set (Vector.add v (Vector.add drag dv));
-        
-      end)
+      end
+      else if not (e#on_screen#get) then begin
+        e#velocity#set Vector.zero;
+        e#sum_forces#set Vector.zero
+      end
+      )
     el

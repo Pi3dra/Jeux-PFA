@@ -2,8 +2,6 @@ open Component_defs
 
 type t = collidable
 
-
-
 let init _ = ()
 
 let respawn player =
@@ -23,8 +21,6 @@ let respawn player =
     List.iter (fun enemy -> enemy#register#get () ) respawneables;
   end
 
-
-
 let damage_player player dt =
   if dt -. player#last_damage_time#get >= 500. then begin
     if player#health#get - 1 <= 0 then
@@ -42,66 +38,63 @@ let damage entity =
   else
     entity#health#set (entity#health#get - 1)
 
+let is_block tag =
+  match tag with
+  | Wall | Spike | Platform  -> true
+  |_ -> false
+
 let iter_pairs f s =
   let rec loop s1 =
     match s1 () with
     | Seq.Nil -> ()
     | Seq.Cons(e1, s1') ->
-        Seq.iter (fun e2 ->
-          (* On ignore les collisions:
-            - Wall et Wall
-            - Falling_Platform et Falling_Platform *)
-          if not (
-            (e1#tag#get = Wall && e2#tag#get = Wall) ||
-            (e1#tag#get = Falling_Platform && e2#tag#get = Falling_Platform)
-          ) then
-            f e1 e2
-        ) s1';
+        if  e1#on_screen#get then
+          Seq.iter (fun e2 ->
+              if e2#on_screen#get && not ( (is_block e1#tag#get  && is_block e2#tag#get ) ) then
+                f e1 e2
+          ) s1';
         loop s1'
   in
   loop s
 
-
 let handle_player_enemy_collision dt enemy enemy_tag (pn: Vector.t) negate_pn =
   let Global.{player} = Global.get() in
     match enemy_tag with
-    | Opossum | Eagle | Slime | Ghost | Spike | Boss->
-    (* ===== Collision par le haut ===== *)
-      if pn.y > 0.0 then begin
-        damage enemy;
-        let vertical_rebound_strength = 0.8 in
-        player#velocity#set (Vector.add player#velocity#get Vector.{x = 0.0; y = -.vertical_rebound_strength});
+    | Opossum | Eagle | Slime | Ghost | Spike | Boss ->
+        (* ===== Collision par le haut ===== *)
+        if pn.y > 0.0 then begin
+          damage enemy;
+          let vertical_rebound_strength = 0.8 in
+          player#velocity#set (Vector.add player#velocity#get Vector.{x = 0.0; y = -.vertical_rebound_strength});
 
-            (* Special case: Spike *)
-        if enemy_tag = Spike then begin
-          damage_player player dt
+          (* Special case: Spike *)
+          if enemy_tag = Spike then begin
+            damage_player player dt
           end;
-      end
+        end
 
-      (* ===== Collision par le bas ===== *)
-      else if pn.y < 0.0 then begin
-        damage_player player dt
-      end
+        (* ===== Collision par le bas ===== *)
+        else if pn.y < 0.0 then begin
+          damage_player player dt
+        end
 
-      (* ===== Collision par les cotes ===== *)
-      else begin         
-        let horizontal_rebound_strength = 0.8 in
-        let rebound_pn = if negate_pn then Vector.neg pn else pn in
+        (* ===== Collision par les cotes ===== *)
+        else begin         
+          let horizontal_rebound_strength = 0.8 in
+          let rebound_pn = if negate_pn then Vector.neg pn else pn in
     
-        let velocity =
-            Vector.{x = horizontal_rebound_strength *. (Float.copy_sign 1.0 rebound_pn.x); y = 0.} in
+          let velocity =
+              Vector.{x = horizontal_rebound_strength *. (Float.copy_sign 1.0 rebound_pn.x); y = 0.} in
     
-        let velocity2 = if not negate_pn then Vector.neg velocity else velocity in
+          let velocity2 = if not negate_pn then Vector.neg velocity else velocity in
 
-        let rebound_velocity = Vector.{x = velocity2.x; y = -0.3} in
+          let rebound_velocity = Vector.{x = velocity2.x; y = -0.3} in
     
-        player#animation#set (Cst.hurt_animation());
-        player#velocity#set (Vector.add player#velocity#get rebound_velocity);
-        damage_player player dt
-
-      end
-
-      | _ -> ()
+          player#animation#set (Cst.hurt_animation());
+          player#velocity#set (Vector.add player#velocity#get rebound_velocity);
+          damage_player player dt
+        end
+    | _ -> ()
 
 let update dt el =
   let Global.{player} = Global.get () in
@@ -151,45 +144,44 @@ let update dt el =
               match (e1#tag#get, e2#tag#get) with
               (*choses sur lesquelles on peut sauter*)
               | (Player, Wall) | (Player , Box) | (Player , BBox) ->
-                let pn = Rect.penetration_vector pdiff rdiff in
-                if pn.y < 0.0 then 
-                  Hashtbl.replace player#playerstate#get Standing ();
+                  let pn = Rect.penetration_vector pdiff rdiff in
+                  if pn.y < 0.0 then 
+                    Hashtbl.replace player#playerstate#get Standing ();
               | (Wall, Player) | (Box, Player) | (BBox, Player )->
-                let pn = Rect.penetration_vector pdiff rdiff in
-                if pn.y > 0.0 then 
-                  Hashtbl.replace player#playerstate#get Standing ();
+                  let pn = Rect.penetration_vector pdiff rdiff in
+                  if pn.y > 0.0 then 
+                    Hashtbl.replace player#playerstate#get Standing ();
                 
               (*Choses sur lesquelles on peut passer par dessous*)
               | (Player, Falling_Platform) | (Player, Platform)->
-                let pn = Rect.penetration_vector pdiff rdiff in
-                if pn.y < 0.0 then 
-                  Hashtbl.replace player#playerstate#get Standing ();
-                if e2#tag#get = Falling_Platform then
-                  Hashtbl.replace player#playerstate#get Boosted ();
+                  let pn = Rect.penetration_vector pdiff rdiff in
+                  if pn.y < 0.0 then 
+                    Hashtbl.replace player#playerstate#get Standing ();
+                  if e2#tag#get = Falling_Platform then
+                    Hashtbl.replace player#playerstate#get Boosted ();
 
               | (Falling_Platform, Player) | (Platform, Player) ->
-                let pn = Rect.penetration_vector pdiff rdiff in
-                if pn.y > 0.0 then 
-                  Hashtbl.replace player#playerstate#get Standing ();
-                if e1#tag#get = Falling_Platform then
-                  Hashtbl.replace player#playerstate#get Boosted ();
-
+                  let pn = Rect.penetration_vector pdiff rdiff in
+                  if pn.y > 0.0 then 
+                    Hashtbl.replace player#playerstate#get Standing ();
+                  if e1#tag#get = Falling_Platform then
+                    Hashtbl.replace player#playerstate#get Boosted ();
 
               (*Choses qui se cassent*)
               | (Falling_Platform, _) ->
-                e1#unregister#get true
+                  e1#unregister#get true
               | (_, Falling_Platform) ->
-                e2#unregister#get true
+                  e2#unregister#get true
               | (Box,Spike) | (BBox , Spike) ->
-                e1#unregister#get true
+                  e1#unregister#get true
               | (Spike,Box) | (Spike, BBox) ->
-                e2#unregister#get true
+                  e2#unregister#get true
 
               | (enemy, Player) ->
-                handle_player_enemy_collision dt e1 enemy pn true
+                  handle_player_enemy_collision dt e1 enemy pn true
               | (Player, enemy) ->
                   let inverse_pn = Vector.mult (-.1.0) pn in
-                handle_player_enemy_collision dt e2 enemy inverse_pn false
+                  handle_player_enemy_collision dt e2 enemy inverse_pn false
 
               | (_, _) -> ()
         end

@@ -8,7 +8,8 @@ let delete animates boss =
     let Vector.{x;y} = boss#position#get in
     ignore (Animated_prop.animated_prop (int_of_float x, int_of_float y, Cst.death_animation()))
   end; 
-  
+
+  On_screen_system.unregister(boss :> On_screen.t);
   Collision_system.unregister(boss :> Collision.t );
   Animation_system.unregister(boss :> Animation.t);
   Forces_system.unregister(boss :> Forces.t);
@@ -18,7 +19,8 @@ let register e =
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Forces_system.( register (e :> t));
-  Move_system.(register (e:> t))
+  Move_system.(register (e:> t));
+  On_screen_system.(register (e :> t))
 
   let boss2 ( pos, tag) : boss2 =
     let e = new boss2 "boss2" in
@@ -51,6 +53,7 @@ let register e =
     e#unregister#set (fun animates -> 
       delete animates e);
   
+    e#on_screen#set false;
     register e;
     e
 

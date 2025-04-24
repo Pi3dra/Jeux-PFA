@@ -9,6 +9,7 @@ let delete animates boss =
     ignore (Animated_prop.animated_prop (int_of_float x, int_of_float y, Cst.death_animation()))
   end; 
   
+  On_screen_system.unregister(boss :> On_screen.t);
   Collision_system.unregister(boss :> Collision.t );
   Animation_system.unregister(boss :> Animation.t);
   Forces_system.unregister(boss :> Forces.t);
@@ -18,7 +19,8 @@ let register e =
   Animation_system.(register (e :> t));
   Collision_system.( register (e :> t));
   Forces_system.( register (e :> t));
-  Move_system.(register (e:> t))
+  Move_system.(register (e:> t));
+  On_screen_system.(register (e :> t))
 
   let boss ( pos, tag) : boss =
     let e = new boss "boss" in
@@ -47,7 +49,8 @@ let register e =
   
     (*
     e#move_func#set ( fun dt -> (move_ground_enemy e dt));*)
-      
+    
+    e#on_screen#set false;
     e#unregister#set (fun animates -> 
       delete animates e);
   
